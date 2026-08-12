@@ -2,12 +2,12 @@
 
 **Everything you need to know and do to remove harmful Facebook content, delist from Google, and close your account.**
 
-| | |
-|---|---|
-| **For** | Thomas Gollogly — Northern Ireland |
+| Field | Details |
+|-------|---------|
+| **For** | Thomas Gollogly, Northern Ireland |
 | **Toolkit** | [ReclaimKit](https://github.com/tgollogly/stop-assholes) |
 | **Version** | August 2026 |
-| **Legal basis** | UK GDPR Article 17 · Defamation Act (NI) 2022 · ICO complaints |
+| **Legal basis** | UK GDPR Article 17, Defamation Act (NI) 2022, ICO complaints |
 
 > **Disclaimer:** ReclaimKit generates templates and tracks your campaign. It is **not legal advice** and is not affiliated with Meta, Google, or any paid removal service. Platform decisions are theirs; this guide helps you use the same official channels reputation firms use.
 
@@ -46,8 +46,8 @@
 
 | Capability | Details |
 |------------|---------|
-| **6-round Meta escalation** | GDPR initial → reminder → Trust & Safety → rebuttal → ICO notice → post-ICO |
-| **3-round Google delisting** | Defamation → personal info → resubmit with case history |
+| **6-round Meta escalation** | GDPR initial, then reminder, Trust & Safety, rebuttal, ICO notice, post-ICO |
+| **3-round Google delisting** | Defamation, then personal info, then resubmit with case history |
 | **1 ICO complaint letter** | Free regulator pressure if Meta refuses after 30 days |
 | **Evidence pack** | Hashed screenshots + case summary for attachments |
 | **Search monitoring** | Scans public web for indexed mentions of your name |
@@ -78,7 +78,7 @@
 | **Harmful content** | Facebook group post with your photo + false allegations in comments |
 | **Group** | AreWeDatingTheSameGuy? Northern Ireland |
 | **Post date** | ~5 June 2025 |
-| **Post URL** | `https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/` |
+| **Post URL** | https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/ |
 | **Already reported in-app?** | Yes (`reported_to_meta: true` in config) |
 | **Police involvement** | Not required for this path (`no_police: true`) |
 | **Plan after removal** | Close/delete Facebook account |
@@ -146,7 +146,7 @@ You are **currently logged into Facebook**. That is useful now. You plan to **cl
 
 - Confirm the post is still live
 - Take fresh screenshots if needed
-- Download your Facebook data (Settings → Download your information)
+- Download your Facebook data (Settings > Download your information)
 - Save any in-app report reference numbers
 
 ### After you delete Facebook
@@ -204,12 +204,12 @@ Edit **`config.yaml`** (never commit this file — it contains personal details)
 ```yaml
 subject:
   full_name: "Thomas Gollogly"
-  email: "your.real.email@example.com"      # ← CHANGE THIS
-  phone: "+44 XXXX XXXXXX"                    # ← CHANGE THIS
-  address_line1: "Your street address"        # ← CHANGE THIS
+  email: "your.real.email@example.com"      # CHANGE THIS
+  phone: "+44 XXXX XXXXXX"                    # CHANGE THIS
+  address_line1: "Your street address"        # CHANGE THIS
   city: "Newry"                               # adjust if needed
   county: "County Down"
-  postcode: "BTXX XXX"                        # ← CHANGE THIS
+  postcode: "BTXX XXX"                        # CHANGE THIS
   country: "United Kingdom"
 ```
 
@@ -292,17 +292,17 @@ python3 main.py all
 
 ```
 output/
-├── campaign/
-│   └── state.json                    ← tracks your progress
-├── campaign-package-YYYYMMDD.../
-│   ├── README.txt
-│   ├── round-01-meta/
-│   │   ├── meta_r1_gdpr_initial.txt  ← EMAIL THIS TO META
-│   │   └── SUBMIT.txt                ← step-by-step instructions
-│   └── round-01-google/
-│       ├── google_r1_defamation.txt
-│       └── SUBMIT.txt
-└── evidence-pack-YYYYMMDD.../        ← attach to emails if needed
+  campaign/
+    state.json                         (tracks your progress)
+  campaign-package-YYYYMMDD.../
+    README.txt
+    round-01-meta/
+      meta_r1_gdpr_initial.txt         (EMAIL THIS TO META)
+      SUBMIT.txt                       (step-by-step instructions)
+    round-01-google/
+      google_r1_defamation.txt
+      SUBMIT.txt
+  evidence-pack-YYYYMMDD.../             (attach to emails if needed)
 ```
 
 Each letter includes a **case reference** like `TG-ER-THOMAS-GOLLO-META-R1`. Always put this in the email subject line.
@@ -418,9 +418,9 @@ Google removal **hides content from search** — it does not delete the Facebook
 
 | Tool | URL | Use when |
 |------|-----|----------|
-| **Defamation troubleshooter** | `https://support.google.com/legal/troubleshooter/1114905` | False allegations in search snippets |
-| **Personal info removal** | `https://support.google.com/websearch/contact/content_removal_form` | Photo, address, phone in results |
-| **Results About You** | `https://myactivity.google.com/results-about-you` | Ongoing alerts for new mentions |
+| **Defamation troubleshooter** | https://support.google.com/legal/troubleshooter/1114905 | False allegations in search snippets |
+| **Personal info removal** | https://support.google.com/websearch/contact/content_removal_form | Photo, address, phone in results |
+| **Results About You** | https://myactivity.google.com/results-about-you | Ongoing alerts for new mentions |
 
 ### Monitor for new URLs
 
@@ -474,10 +474,10 @@ python3 main.py close
 
 ### Before deleting your account
 
-- [ ] Download your data: Settings → Download your information
+- [ ] Download your data: Settings > Download your information
 - [ ] Save all Meta reply emails locally
 - [ ] Save evidence pack and campaign letters from `output/`
-- [ ] Remove apps connected to Facebook (Settings → Apps and websites)
+- [ ] Remove apps connected to Facebook (Settings > Apps and websites)
 - [ ] Update logins on sites where you used "Log in with Facebook"
 - [ ] Confirm post is gone (check while still logged in, or ask someone in the group)
 
@@ -488,7 +488,7 @@ python3 main.py close
 | **Deactivate** | Profile hidden; reversible for 30 days |
 | **Delete permanently** | Cannot log back in; data scheduled for deletion |
 
-Path: Settings & privacy → Settings → Accounts Centre → Personal details → Account ownership and control → Deactivation or deletion
+Path: Settings and privacy > Settings > Accounts Centre > Personal details > Account ownership and control > Deactivation or deletion
 
 ### After Facebook is closed
 
@@ -553,8 +553,8 @@ Full VPS details: **`deploy/README.md`**
 | `python3 main.py campaign init` | Start campaign + Round 1 package |
 | `python3 main.py campaign status` | Show progress dashboard |
 | `python3 main.py campaign sent --track meta --round N` | Record submission |
-| `python3 main.py campaign no-response --track meta` | 7-day silence → next round |
-| `python3 main.py campaign refused --track meta --reason "..."` | Refusal → rebuttal |
+| `python3 main.py campaign no-response --track meta` | 7-day silence, then next round |
+| `python3 main.py campaign refused --track meta --reason "..."` | Refusal, then rebuttal letter |
 | `python3 main.py campaign next --track meta --round N` | Generate specific round |
 | `python3 main.py campaign success` | Mark content removed |
 | `python3 main.py monitor` | Scan search for indexed URLs |
@@ -587,8 +587,8 @@ Restart if prompted. Ubuntu is the default distribution.
 ### Step 2 — Install Docker Desktop
 
 1. Download from `https://www.docker.com/products/docker-desktop/`
-2. Install and enable **WSL 2 backend** in Settings → General
-3. Enable integration with your Ubuntu distro in Settings → Resources → WSL Integration
+2. Install and enable **WSL 2 backend** in Settings > General
+3. Enable integration with your Ubuntu distro in Settings > Resources > WSL Integration
 
 ### Step 3 — Clone and run in WSL
 
@@ -729,9 +729,9 @@ All 12 tests should pass.
 
 | Service | Contact | Use for |
 |---------|---------|---------|
-| **ICO** | `https://ico.org.uk` · 0303 123 1113 | Meta GDPR failures |
+| **ICO** | https://ico.org.uk, phone 0303 123 1113 | Meta GDPR failures |
 | **Citizens Advice NI** | 0800 915 4605 | General guidance |
-| **Meta DPO** | privacy@facebook.com · dpo@facebook.com | Data erasure requests |
+| **Meta DPO** | privacy@facebook.com, dpo@facebook.com | Data erasure requests |
 
 Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if Meta and ICO both fail.
 
@@ -741,13 +741,13 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 
 ### Phase 1 — Setup (Day 1)
 
-- [ ] Clone repo and `pip install -r requirements.txt`
+- [ ] Clone repo and run `pip install -r requirements.txt`
 - [ ] Run `python3 main.py init`
 - [ ] Fill real email, address, phone in `config.yaml`
 - [ ] Copy screenshots to `evidence/screenshots/`
 - [ ] Run `python3 main.py evidence`
 - [ ] Run `python3 main.py campaign init`
-- [ ] Run `python3 main.py doctor` — all checks green
+- [ ] Run `python3 main.py doctor` (all checks green)
 
 ### Phase 2 — Meta removal (Week 1)
 
@@ -782,7 +782,6 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 
 ---
 
-<p align="center">
-  <strong>ReclaimKit</strong> · MIT License · Copyright © 2026 Thomas Gollogly<br/>
-  <sub>Built in Northern Ireland · Not legal advice · Not affiliated with Meta or Google</sub>
-</p>
+**ReclaimKit** | MIT License | Copyright 2026 Thomas Gollogly
+
+Built in Northern Ireland. Not legal advice. Not affiliated with Meta or Google.
