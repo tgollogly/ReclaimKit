@@ -7,7 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from src.escalation_letters import ICO_ROUNDS, META_ROUNDS, TRACKS, LetterFn
+from src.escalation_letters import ICO_ROUNDS, META_ROUNDS, TRACKS
+from src.security import clamp_text
 from src.letter_context import case_ref, today_long
 
 STATE_VERSION = 1
@@ -191,6 +192,11 @@ def record_refusal(
     track: str,
     reason: str,
 ) -> dict[str, Any]:
+    if track not in state["tracks"]:
+        raise ValueError(f"Unknown track: {track!r}")
+    reason = clamp_text(reason.strip(), 4000)
+    if not reason:
+        raise ValueError("Refusal reason cannot be empty")
     data = state["tracks"][track]
     event = {
         "type": "refused",
@@ -304,6 +310,12 @@ def generate_next_package(
             _gen("ico", 1)
         elif ico_r < state["tracks"]["ico"]["max_round"] and meta_r >= 5:
             _gen("ico", ico_r + 1)
+
+    if not generated:
+        raise ValueError(
+            "No letters to generate for current campaign state. "
+            "Use: python3 main.py campaign next --track meta"
+        )
 
     master = package_dir / "README.txt"
     master.write_text(_package_readme(state, generated), encoding="utf-8")

@@ -110,6 +110,7 @@ Each letter includes a case reference (e.g. `TG-ER-THOMAS-GOLLO-META-R1`).
 | `campaign status` | Dashboard |
 | `campaign success` | Mark content removed |
 | `daemon once` | Daily monitor + Slack + escalate |
+| `doctor` | Health check — config, deps, letters |
 | `monitor` | Scan search for indexed URLs |
 | `close` | Facebook closure checklist |
 
@@ -129,6 +130,18 @@ cd deploy && docker compose up -d --build
 | Photo search (SerpAPI/TinEye) | — |
 | Slack alerts | — |
 | Next Meta letter / email | — |
+
+---
+
+## 🧪 Test & verify
+
+```bash
+python3 -m pytest tests/ -v      # automated test suite
+python3 main.py doctor             # validate your setup
+python3 main.py daemon once --dry-run
+```
+
+Use `.env.example` for VPS secrets (`RECLAIMKIT_SMTP_PASSWORD`, etc.) instead of storing passwords in `config.yaml`.
 
 ---
 

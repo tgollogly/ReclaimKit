@@ -24,6 +24,7 @@ from src.legal_guide import print_close_facebook_guide, print_legal_guide
 from src.monitor import write_monitor_report
 from src.osint import write_osint_report
 from src.automation import run_daily_automation
+from src.doctor import format_doctor_report, run_doctor
 from src.takedown import write_takedown_letters
 
 
@@ -186,6 +187,12 @@ def cmd_campaign_success(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_doctor(args: argparse.Namespace) -> int:
+    report = run_doctor(args.config)
+    print(format_doctor_report(report))
+    return 0 if report["ok"] else 1
+
+
 def cmd_daemon_once(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     if not config.get("automation", {}).get("enabled", True):
@@ -244,6 +251,7 @@ def main() -> int:
     sub.add_parser("monitor", help="Scan public search for indexed URLs")
     sub.add_parser("guide", help="Print removal action guide")
     sub.add_parser("close", help="Checklist to close Facebook after removal")
+    sub.add_parser("doctor", help="Run health checks and validate setup")
     sub.add_parser("all", help="Evidence + campaign init + osint + monitor")
 
     daemon = sub.add_parser("daemon", help="VPS daily automation (monitor + Slack + escalate)")
@@ -304,6 +312,7 @@ def main() -> int:
         "monitor": cmd_monitor,
         "guide": cmd_guide,
         "close": cmd_close,
+        "doctor": cmd_doctor,
         "all": cmd_all,
     }
     return handlers[args.command](args)

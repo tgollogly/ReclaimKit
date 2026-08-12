@@ -27,19 +27,25 @@ from src.notifier import (
     slack_notify,
 )
 
-SEEN_URLS_PATH = Path("output/campaign/seen_urls.json")
+SEEN_URLS_FILENAME = "seen_urls.json"
 
 
-def _load_seen_urls() -> set[str]:
-    if not SEEN_URLS_PATH.exists():
+def _seen_urls_path(output_dir: Path) -> Path:
+    return output_dir / "campaign" / SEEN_URLS_FILENAME
+
+
+def _load_seen_urls(output_dir: Path) -> set[str]:
+    path = _seen_urls_path(output_dir)
+    if not path.exists():
         return set()
-    data = json.loads(SEEN_URLS_PATH.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
     return set(data.get("urls", []))
 
 
-def _save_seen_urls(urls: set[str]) -> None:
-    SEEN_URLS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    SEEN_URLS_PATH.write_text(
+def _save_seen_urls(output_dir: Path, urls: set[str]) -> None:
+    path = _seen_urls_path(output_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
         json.dumps({"urls": sorted(urls), "updated_at": datetime.now(timezone.utc).isoformat()}, indent=2),
         encoding="utf-8",
     )
@@ -154,7 +160,7 @@ def run_daily_automation(config: dict[str, Any], *, dry_run: bool = False) -> di
         report_path = out_dir / f"auto-search-{datetime.now(timezone.utc).strftime('%Y%m%d')}.json"
         report_path.write_text(json.dumps(monitor_report, indent=2), encoding="utf-8")
 
-        seen = _load_seen_urls()
+        seen = _load_seen_urls(out_dir)
         for item in monitor_report.get("results", []):
             url = item.get("url", "")
             if not url or url in seen:
@@ -163,7 +169,7 @@ def run_daily_automation(config: dict[str, Any], *, dry_run: bool = False) -> di
                 new_hits.append(item)
                 seen.add(url)
         if not dry_run:
-            _save_seen_urls(seen)
+            _save_seen_urls(out_dir, seen)
         summary["new_url_count"] = len(new_hits)
 
         if new_hits and webhook and not dry_run:
@@ -178,7 +184,7 @@ def run_daily_automation(config: dict[str, Any], *, dry_run: bool = False) -> di
         img_path.write_text(json.dumps(image_report, indent=2), encoding="utf-8")
 
         img_hits = [r for r in image_report.get("results", []) if r.get("url") and "error" not in r]
-        seen = _load_seen_urls()
+        seen = _load_seen_urls(out_dir)
         fresh_img: list[dict[str, Any]] = []
         for hit in img_hits:
             url = hit["url"]
@@ -187,7 +193,7 @@ def run_daily_automation(config: dict[str, Any], *, dry_run: bool = False) -> di
                 if not dry_run:
                     seen.add(url)
         if not dry_run:
-            _save_seen_urls(seen)
+            _save_seen_urls(out_dir, seen)
         summary["image_hit_count"] = len(fresh_img)
 
         if fresh_img and webhook and not dry_run:
