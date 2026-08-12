@@ -49,7 +49,7 @@ ReclaimKit runs in four phases:
 sudo apt update && sudo apt install -y git
 git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
 cd ~/reclaimkit
-chmod +x scripts/wsl-setup-and-test.sh
+chmod +x scripts/wsl-setup-and-test.sh scripts/wsl-reset-repo.sh
 ./scripts/wsl-setup-and-test.sh
 ```
 
