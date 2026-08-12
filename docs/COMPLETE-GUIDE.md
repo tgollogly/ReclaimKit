@@ -4,7 +4,7 @@
 
 | Field | Details |
 |-------|---------|
-| **For** | Your Name, Your Region |
+| **For** | Anyone removing harmful social content |
 | **Toolkit** | [ReclaimKit](https://github.com/tgollogly/reclaimkit) |
 | **Version** | August 2026 |
 | **Legal basis** | Configurable — set `jurisdiction` in config.yaml for your country's privacy law |
@@ -27,7 +27,7 @@
 8. [How to send Round 1 to Meta](#8-how-to-send-round-1-to-meta)
 9. [Campaign tracks and timeline](#9-campaign-tracks-and-timeline)
 10. [Google delisting (parallel track)](#10-google-delisting-parallel-track)
-11. [ICO complaint (if Meta refuses)](#11-ico-complaint-if-meta-refuses)
+11. [Regulator complaint (if Meta refuses)](#11-regulator-complaint-if-meta-refuses)
 12. [Closing Facebook after removal](#12-closing-facebook-after-removal)
 13. [Daily monitoring and VPS automation](#13-daily-monitoring-and-vps-automation)
 14. [All CLI commands reference](#14-all-cli-commands-reference)
@@ -55,9 +55,9 @@
 
 | Capability | Details |
 |------------|---------|
-| **6-round Meta escalation** | GDPR initial, then reminder, Trust & Safety, rebuttal, ICO notice, post-ICO |
+| **6-round Meta escalation** | Privacy initial, then reminder, Trust & Safety, rebuttal, regulator notice, post-regulator |
 | **3-round Google delisting** | Defamation, then personal info, then resubmit with case history |
-| **1 ICO complaint letter** | Free regulator pressure if Meta refuses after 30 days |
+| **1 regulator complaint letter** | Free authority pressure if Meta refuses after the response deadline |
 | **Evidence pack** | Hashed screenshots + case summary for attachments |
 | **Search monitoring** | Scans public web for indexed mentions of your name |
 | **Image search** | Optional daily reverse-image scan (SerpAPI/TinEye) |
@@ -74,34 +74,33 @@
 | **Guarantee removal** | Platforms decide; persistence and proper legal framing improve success |
 | **Deanonymize commenters** | Meta will not reveal identities without legal disclosure |
 
-**Realistic expectation:** Meta must respond to UK GDPR within **one calendar month**. Many cases resolve in Round 1–3. If Meta refuses, ICO complaints are free and often effective. Google delisting hides content from search even if a copy exists elsewhere.
+**Realistic expectation:** Platforms must respond within the deadline set by your jurisdiction (often **30 days**). Many cases resolve in Round 1–3. If the platform refuses, regulator complaints are free and often effective. Google delisting hides content from search even if a copy exists elsewhere.
 
 ---
 
-## 2. Your situation at a glance
+## 2. Example case (fill in your own details in config.yaml)
 
-| Field | Value |
-|-------|-------|
-| **Your name** | Your Name |
-| **Location** | Your Region, Your Country |
-| **Harmful content** | Facebook group post with your photo + false allegations in comments |
-| **Group** | AreWeDatingTheSameGuy? Your Region |
-| **Post date** | ~5 June 2025 |
-| **Post URL** | https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/ |
-| **Already reported in-app?** | Yes (`reported_to_meta: true` in config) |
-| **Police involvement** | Not required for this path (`no_police: true`) |
-| **Plan after removal** | Close/delete Facebook account |
+| Field | Example placeholder |
+|-------|---------------------|
+| **Your name** | Set in `config.yaml` → `subject.full_name` |
+| **Location** | Set in `config.yaml` → `subject.country` |
+| **Harmful content** | Facebook group post with your photo + false allegations |
+| **Group** | Set in `config.yaml` → `case.facebook.group_name` |
+| **Post URL** | Set in `config.yaml` → `case.facebook.post_url` |
+| **Already reported in-app?** | Set `reported_to_meta: true` if applicable |
 
-### Alleged commenters (documented in config)
+### Alleged commenters
 
-These handles are recorded for your evidence pack. ReclaimKit **cannot** identify real people behind anonymous Facebook names — only Meta can, and only via legal process.
+Add handles to `config.yaml` → `case.alleged_commenters`. ReclaimKit **cannot** identify real people behind anonymous names — only the platform can, via legal process.
 
-- BrightPanda3834
-- IntelligentJaguar6700
-- Keerzo Diesel
-- Pieter James
-- EmpatheticPeapod4820
-- Anonymous participant 617
+Example:
+
+```yaml
+alleged_commenters:
+  - display_name: "ExampleUser1"
+    comment: "Example harmful comment"
+    posted_approx: "date unknown"
+```
 
 ---
 
@@ -112,10 +111,10 @@ These handles are recorded for your evidence pack. ReclaimKit **cannot** identif
 | Item | Used for |
 |------|----------|
 | **Your real email address** | Sending GDPR requests; Meta replies here |
-| **Postal address** | UK GDPR identity (name + address in letters) |
-| **Full legal name** | Your Name |
+| **Postal address** | Identity verification in letters (name + address) |
+| **Full legal name** | As it appears on the harmful content |
 | **Screenshots** | Post, comments, your photo — saved locally |
-| **Post URL** | Already in `config.example.yaml` |
+| **Post URL** | Set in `config.yaml` after `init` |
 | **A computer** | Windows 11, Mac, or Linux |
 
 ### Helpful but optional
@@ -133,7 +132,7 @@ These handles are recorded for your evidence pack. ReclaimKit **cannot** identif
 | Item | Notes |
 |------|-------|
 | **Facebook password long-term** | GDPR runs on email; see [Section 4](#4-facebook-login--what-matters) |
-| **Solicitor** | Only if Meta + ICO both fail |
+| **Solicitor** | Only if platform + regulator both fail |
 | **Police report** | Your chosen path avoids this |
 | **Payment to Removify** | Same process, self-service |
 
@@ -147,7 +146,7 @@ You are **currently logged into Facebook**. That is useful now. You plan to **cl
 
 - Email **privacy@facebook.com** with GDPR letters
 - Meta escalation form: `https://www.facebook.com/help/contact/571927962827151`
-- ICO complaint at `https://ico.org.uk/make-a-complaint/`
+- Regulator complaint (URL from `jurisdiction.regulator_url` in config)
 - Google delisting forms
 - All ReclaimKit commands (`campaign`, `monitor`, `daemon`, etc.)
 
@@ -215,34 +214,34 @@ If you created `config.yaml` before the latest update, copy new fields from
 
 ```yaml
 subject:
-  full_name: "Your Name"
-  email: "your.real.email@example.com"      # CHANGE THIS
-  phone: "+44 XXXX XXXXXX"                    # CHANGE THIS
-  address_line1: "Your street address"        # CHANGE THIS
-  city: "Newry"                               # adjust if needed
-  county: "County Down"
-  postcode: "BTXX XXX"                        # CHANGE THIS
-  country: "Your Country"
+  full_name: "Your Full Name"
+  email: "your.email@example.com"
+  phone: "+1 555 0100"
+  address_line1: "Your street address"
+  city: "Your city"
+  region: ""              # state/province — optional
+  postcode: "12345"
+  country: "Your country"
 ```
 
-### Case block — already pre-filled for your post
+### Case block — copy from config.example.yaml and edit
 
 ```yaml
 case:
   facebook:
-    group_name: "AreWeDatingTheSameGuy? Your Region"
+    group_name: "Example Community Group"
     post_date: "2025-06-05"
-    post_caption: "Any red flags Thomas gollogly"
-    post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
+    post_caption: "Example caption text"
+    post_url: "https://www.facebook.com/groups/EXAMPLE/posts/EXAMPLE/"
     post_origin: uncertain   # uncertain | third_party | self — see section 24
     reported_to_meta: true
     meta_reports:
       - type: "In-app content report (photo/post)"
-        date: "2026-08-12"
+        date: "2026-01-01"
         outcome: "Rejected — does not violate Community Standards"
         notes: "Attach Meta support screenshot"
-      - type: "Group report (hate speech)"
-        date: "2026-08-12"
+      - type: "Group report"
+        date: "2026-01-01"
         outcome: "Submitted"
 ```
 
@@ -339,13 +338,13 @@ output/
   evidence-pack-YYYYMMDD.../             (attach to emails if needed)
 ```
 
-Each letter includes a **case reference** like `TG-ER-THOMAS-GOLLO-META-R1`. Always put this in the email subject line.
+Each letter includes a **case reference** like `RK-ER-YOURNAME-META-R1` (generated from your name in config). Always put this in the email subject line.
 
 ---
 
 ## 8. How to send Round 1 to Meta
 
-This is the **most important step**. It starts the UK GDPR one-month clock.
+This is the **most important step**. It starts the legal response clock for your jurisdiction.
 
 ### Step-by-step
 
@@ -353,7 +352,7 @@ This is the **most important step**. It starts the UK GDPR one-month clock.
 2. Open your email client (Gmail, Outlook, etc.)
 3. **To:** `privacy@facebook.com`
 4. **CC (optional):** `dpo@facebook.com`
-5. **Subject:** `TG-ER-THOMAS-GOLLO-META-R1 — UK GDPR Article 17 Erasure Request — Your Name`
+5. **Subject:** `RK-ER-YOURNAME-META-R1 — Article 17 Erasure Request — Your Full Name`
 6. **Body:** Paste the entire letter
 7. **Attachments:** All screenshots from `evidence/screenshots/`
 8. Send from the **same email address** listed in `config.yaml`
@@ -388,8 +387,8 @@ ReclaimKit runs three parallel **tracks**. Meta is the priority.
 | **R2** | GDPR reminder (no response) | 7+ days after R1 with no removal |
 | **R3** | Trust & Safety escalation | 7+ days after R2, or if refused |
 | **R4** | Formal rebuttal to refusal | When Meta refuses with a reason |
-| **R5** | Notice of intended ICO complaint | 30 days without removal |
-| **R6** | Post-ICO follow-up to Meta | After ICO accepts complaint |
+| **R5** | Notice of intended regulator complaint | After `response_days` with no removal |
+| **R6** | Post-regulator follow-up to Meta | After regulator accepts complaint |
 
 **Generate next round automatically:**
 
@@ -417,7 +416,7 @@ Every time you send a letter or submit a form:
 ```bash
 python3 main.py campaign sent --track meta --round 2
 python3 main.py campaign sent --track google --round 1
-python3 main.py campaign sent --track ico --round 1 --reference ICO-REF-12345
+python3 main.py campaign sent --track regulator --round 1 --reference REG-REF-12345
 ```
 
 ### Check progress anytime
@@ -468,37 +467,37 @@ Reports save to `output/search-monitor-*.txt` and `.json`. Submit delisting for 
 
 ---
 
-## 11. ICO complaint (if Meta refuses)
+## 11. Regulator complaint (if Meta refuses)
 
-If Meta does not remove content within **30 days**, or explicitly refuses your GDPR request, escalate to the **Information Commissioner's Office (ICO)** — free, no police, no court.
+If Meta does not remove content within the deadline set in `jurisdiction.response_days`, or explicitly refuses your erasure request, escalate to your **data protection authority** — free, no police, no court.
 
 ### When to file
 
-- 30 days passed since Round 1 with no removal
+- Response deadline passed since Round 1 with no removal
 - Meta sent a refusal citing "community standards" or similar
 - After Meta Round 4 (rebuttal) failed
 
 ### How to file
 
-1. Generate ICO letter: `python3 main.py campaign next --track ico`
-2. Go to: `https://ico.org.uk/make-a-complaint/`
+1. Generate regulator letter: `python3 main.py campaign next --track regulator`
+2. Go to the URL in `jurisdiction.regulator_url` in your config
 3. Attach:
    - Evidence pack from `output/evidence-pack-.../`
    - All Meta correspondence (your emails + their replies)
    - Screenshots
-4. Record: `python3 main.py campaign sent --track ico --round 1 --reference YOUR-ICO-REF`
+4. Record: `python3 main.py campaign sent --track regulator --round 1 --reference YOUR-REG-REF`
 
-### After ICO
+### After the regulator
 
-- ICO may contact Meta on your behalf
-- Send Meta Round 5 (ICO notice) when you file
-- Send Meta Round 6 after ICO acknowledges the complaint
+- The authority may contact Meta on your behalf
+- Send Meta Round 5 (regulator notice) when you file
+- Send Meta Round 6 after the regulator acknowledges the complaint
 
 ---
 
 ## 12. Closing Facebook after removal
 
-**Do NOT delete Facebook until removal is confirmed or you have exhausted the GDPR/ICO path.**
+**Do NOT delete Facebook until removal is confirmed or you have exhausted the privacy/regulator path.**
 
 Run the built-in checklist:
 
@@ -675,7 +674,7 @@ python3 main.py monitor
 | **VPS monitoring** | **~£5/month** | Hetzner, DigitalOcean, etc. |
 | **SerpAPI (image search)** | **~$50/month** free tier available | Optional |
 | **Removify** | **£400–£2,000 per item** | Same forms and emails |
-| **NI solicitor** | **£500–£5,000+** | Only if Meta + ICO fail |
+| **Solicitor** | **Varies** | Only if platform + regulator both fail |
 
 ReclaimKit automates what paid services do manually: letter drafting, escalation timing, monitoring, and record-keeping.
 
@@ -701,7 +700,7 @@ ReclaimKit automates what paid services do manually: letter drafting, escalation
 
 ### Can this hurt my US travel or create a public record?
 
-This process is **private correspondence** with Meta/Google/ICO — not a public court case or police record. Google delisting **reduces** public visibility. Avoid posting about the case on public blogs (higher SEO risk than a private Facebook group).
+This process is **private correspondence** with Meta/Google/your regulator — not a public court case or police record. Google delisting **reduces** public visibility. Avoid posting about the case on public blogs (higher SEO risk than a private group).
 
 ### Can ReclaimKit identify who posted the comments?
 
@@ -715,15 +714,15 @@ Record the refusal and generate Round 4 (rebuttal):
 python3 main.py campaign refused --track meta --reason "Pasted Meta's exact reply here"
 ```
 
-Then proceed toward ICO if still not removed after 30 days.
+Then proceed toward a regulator complaint if still not removed after the response deadline.
 
 ### How long does it take?
 
 | Stage | Typical timeframe |
 |-------|-------------------|
-| Meta GDPR response | Up to 1 calendar month |
+| Meta privacy response | Up to `jurisdiction.response_days` (often 30 days) |
 | Google delisting | Days to weeks |
-| ICO complaint | Weeks to months |
+| Regulator complaint | Weeks to months |
 | Full campaign | 1–3 months in most cases |
 
 ---
@@ -769,15 +768,14 @@ chmod +x scripts/audit.sh
 
 ---
 
-## 19. Support contacts (no police required)
+## 19. Support contacts
 
 | Service | Contact | Use for |
 |---------|---------|---------|
-| **ICO** | https://ico.org.uk, phone 0303 123 1113 | Meta GDPR failures |
-| **Citizens Advice NI** | 0800 915 4605 | General guidance |
+| **Your data protection authority** | URL in `jurisdiction.regulator_url` | Platform privacy failures |
 | **Meta DPO** | privacy@facebook.com, dpo@facebook.com | Data erasure requests |
 
-Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if Meta and ICO both fail.
+Set `jurisdiction.regulator_name` and `jurisdiction.regulator_url` in config for your country. Solicitors remain optional if the platform and regulator both fail.
 
 ---
 
@@ -796,7 +794,7 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 ### Phase 2 — Meta removal (Week 1)
 
 - [ ] Email Round 1 letter to `privacy@facebook.com`
-- [ ] Subject line includes case reference `TG-ER-THOMAS-GOLLO-META-R1`
+- [ ] Subject line includes your case reference from the generated letter (e.g. `RK-ER-YOURNAME-META-R1`)
 - [ ] Attach all screenshots
 - [ ] Run `python3 main.py campaign sent --track meta --round 1`
 - [ ] Save sent email and any Meta reply
@@ -813,7 +811,7 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 - [ ] If no removal in 7 days: `campaign no-response --track meta`
 - [ ] If Meta refuses: `campaign refused --track meta --reason "..."`
 - [ ] Round 3+: submit escalation form at `facebook.com/help/contact/571927962827151`
-- [ ] If 30 days pass: ICO complaint + Meta Round 5
+- [ ] If response deadline passes: regulator complaint + Meta Round 5
 
 ### Phase 5 — After removal
 
@@ -830,15 +828,15 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 
 These are **two different doors** into Meta. ReclaimKit is built for the legal one.
 
-| | Community Standards (Report button) | UK GDPR Article 17 (privacy@facebook.com) |
-|---|-------------------------------------|---------------------------------------------|
+| | Community Standards (Report button) | Privacy erasure request (privacy@facebook.com) |
+|---|---|---|
 | **Question** | Does this break Meta's house rules? | Must you delete my personal data? |
 | **Team** | Content moderation | Data protection / privacy |
-| **Deadline** | None | **1 calendar month** |
+| **Deadline** | None | Set by your jurisdiction (often **30 days**) |
 | **Your outcome** | Rejected ("no violation") | Still pending until DPO responds |
 | **Bullying/harm** | Often dismissed as "discussion" | Harm supports erasure + distress |
 
-**Bullying is harmful.** Meta's rejection only means their moderation system did not classify it as a policy breach. UK GDPR still applies to your photo, name, and comments about you.
+**Bullying is harmful.** Meta's rejection only means their moderation system did not classify it as a policy breach. Applicable privacy law still covers your photo, name, and comments about you.
 
 ## 22. Meta rejected your report — what now
 
@@ -910,7 +908,7 @@ If the container is deleted and recreated, **your data remains** in `output/` an
 
 ## 24. Unsure who posted? (safe wording)
 
-**You can still remove everything.** UK GDPR protects **your data** — not only cases where someone else posted.
+**You can still remove everything.** Applicable privacy law protects **your data** — not only cases where someone else posted.
 
 If you do not remember whether you posted the caption yourself (e.g. after drinking, testing the group), use:
 
@@ -942,16 +940,16 @@ The harmful **comments** are still from other people — erasing those protects 
 
 | Risk | Level | Notes |
 |------|-------|-------|
-| **Private Facebook group post** | Medium | Not on Google for everyone, but group members see it |
+| **Private group post** | Medium | Not on Google for everyone, but group members see it |
 | **Google search for your name** | Medium–High | If indexed, employers *may* find it — run `python3 main.py monitor` |
-| **AWSDTG specifically** | Low | Most recruiters do not search this group by name |
+| **Niche community groups** | Low | Most recruiters do not search specific groups by name |
 | **After Meta removal + Google delist** | Low | Source gone + search hidden = much safer |
 
 **What helps job hunting:**
-1. Remove source (Meta GDPR) — **do this first**
+1. Remove source (Meta privacy request) — **do this first**
 2. Google delisting + **Results About You** alerts
 3. Do **not** post about the case publicly (creates new SEO)
-4. LinkedIn/CV focus on skills — most NI employers check LinkedIn, not AWSDTG
+4. LinkedIn/CV focus on skills — most employers check LinkedIn, not niche groups
 
 **Reality:** Until removed, there is **some** risk if someone Googles you. After removal and delisting (typically 1–3 months), risk drops sharply. This is **not** a criminal record or court case — it does not appear on standard employment checks.
 
@@ -961,10 +959,10 @@ The harmful **comments** are still from other people — erasing those protects 
 
 | Stage | Typical time | What happens |
 |-------|--------------|--------------|
-| **Send GDPR Round 1** | Day 1 (today) | Clock starts — Meta has **1 calendar month** to respond |
+| **Send privacy Round 1** | Day 1 (today) | Clock starts — platform has until `response_days` to respond |
 | **Meta removes post** | 1–4 weeks | Many cases resolve Round 1–3 |
-| **Meta refuses / silence** | Week 2–4 | Escalation rounds + ICO |
-| **ICO complaint** | Week 4–8+ | Free regulator pressure |
+| **Meta refuses / silence** | Week 2–4 | Escalation rounds + regulator |
+| **Regulator complaint** | Week 4–8+ | Free authority pressure |
 | **Google delisting** | 1–4 weeks after submit | Hides from search (parallel track) |
 | **Google cache clears** | Days–weeks after delist | Old snippets may linger briefly |
 | **Full campaign** | **1–3 months** typical | Complex refusals take longer |
@@ -998,6 +996,6 @@ Data **auto-saves** to `output/` on the host — see section 23.
 
 ---
 
-**ReclaimKit** | MIT License | Copyright 2026 Your Name
+**ReclaimKit** | MIT License | Copyright 2026 ReclaimKit contributors
 
-Built in Your Region. Not legal advice. Not affiliated with Meta or Google.
+Not legal advice. Not affiliated with Meta or Google.
