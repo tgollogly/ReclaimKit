@@ -35,6 +35,9 @@
 18. [Troubleshooting](#18-troubleshooting)
 19. [Support contacts (no police required)](#19-support-contacts-no-police-required)
 20. [Checklist — print and tick off](#20-checklist--print-and-tick-off)
+21. [Community Standards vs GDPR](#21-community-standards-vs-gdpr)
+22. [Meta rejected your report — what now](#22-meta-rejected-your-report--what-now)
+23. [Docker — does it auto-save?](#23-docker--does-it-auto-save)
 
 ---
 
@@ -223,6 +226,26 @@ case:
     post_caption: "Any red flags Thomas gollogly"
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
     reported_to_meta: true
+    meta_reports:
+      - type: "In-app content report (photo/post)"
+        date: "2026-08-12"
+        outcome: "Rejected — does not violate Community Standards"
+        notes: "Attach Meta support screenshot"
+      - type: "Group report (hate speech)"
+        date: "2026-08-12"
+        outcome: "Submitted"
+```
+
+Letters automatically cite these reports and explain why a Community Standards
+rejection does **not** answer a GDPR request.
+
+### Optional harm statement
+
+```yaml
+case:
+  harm_statement: >
+    Optional custom paragraph describing impact on you. If omitted, letters use
+    a strong default harm/distress paragraph.
 ```
 
 ### Preferences
@@ -247,7 +270,8 @@ Copy your Facebook screenshots into **`evidence/screenshots/`**:
 
 - Full post view (photo + caption visible)
 - Each harmful comment (scroll and capture)
-- Any Meta report confirmation screen
+- Meta report confirmation screen
+- **Meta "We didn't remove the photo" support message (important for Round 1)**
 
 Supported formats: PNG, JPG, JPEG, WEBP.
 
@@ -779,6 +803,84 @@ Your config sets `no_police: true`. PSNI (101) and solicitors remain optional if
 - [ ] Run `python3 main.py close` and follow checklist
 - [ ] Delete/deactivate Facebook account
 - [ ] Monitor monthly 3–6 months: `python3 main.py monitor`
+
+---
+
+## 21. Community Standards vs GDPR
+
+These are **two different doors** into Meta. ReclaimKit is built for the legal one.
+
+| | Community Standards (Report button) | UK GDPR Article 17 (privacy@facebook.com) |
+|---|-------------------------------------|---------------------------------------------|
+| **Question** | Does this break Meta's house rules? | Must you delete my personal data? |
+| **Team** | Content moderation | Data protection / privacy |
+| **Deadline** | None | **1 calendar month** |
+| **Your outcome** | Rejected ("no violation") | Still pending until DPO responds |
+| **Bullying/harm** | Often dismissed as "discussion" | Harm supports erasure + distress |
+
+**Bullying is harmful.** Meta's rejection only means their moderation system did not classify it as a policy breach. UK GDPR still applies to your photo, name, and comments about you.
+
+## 22. Meta rejected your report — what now
+
+If you received: *"We didn't remove the photo"* / *"doesn't go against Community Standards"*:
+
+1. **Save a screenshot** to `evidence/screenshots/`
+2. Add it to `config.yaml` under `meta_reports` (see config.example.yaml)
+3. **Send GDPR Round 1 anyway** — the letter now cites the rejection explicitly
+4. Record refusal:
+
+```bash
+python3 main.py campaign refused --track meta --reason "In-app report rejected: does not violate Community Standards (12 Aug 2026)"
+```
+
+5. Attach the rejection screenshot to every Meta email
+
+Paid removal firms see this rejection daily. Their next step is always **GDPR to privacy@facebook.com** — same as you.
+
+## 23. Docker — does it auto-save?
+
+**Yes.** Docker does not lose your campaign when the container restarts.
+
+These folders are **mounted from your PC/VPS** (not stored only inside the container):
+
+| Host path | What is saved |
+|-----------|----------------|
+| `output/` | Campaign state, letters, monitor reports, automation logs |
+| `output/campaign/state.json` | Round tracking (`campaign sent`, etc.) |
+| `output/automation-log.jsonl` | Daily daemon history |
+| `evidence/` | Screenshots and evidence packs |
+
+From `deploy/docker-compose.yml`:
+
+```yaml
+volumes:
+  - ../config.yaml:/app/config.yaml:ro
+  - ../evidence:/app/evidence
+  - ../output:/app/output
+```
+
+**What persists automatically when `daemon once` runs:**
+
+- Updated `state.json` after escalation
+- New monitor JSON reports
+- `seen_urls.json` (URLs already alerted)
+- Appended lines in `automation-log.jsonl`
+
+**What is NOT automatic:**
+
+- Sending Round 1 initially (you run `campaign init` once)
+- Recording `campaign sent` unless you run the command (or auto-email sends)
+- Google form submission (always manual)
+
+**Safe workflow:**
+
+```bash
+python3 main.py campaign init
+python3 main.py campaign sent --track meta --round 1
+cd deploy && docker compose up -d --build
+```
+
+If the container is deleted and recreated, **your data remains** in `output/` and `evidence/` on the host.
 
 ---
 

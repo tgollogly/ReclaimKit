@@ -4,9 +4,13 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     volumes:
+      # REQUIRED — persists campaign state, letters, logs, monitor reports
       - ../config.yaml:/app/config.yaml:ro
       - ../evidence:/app/evidence
       - ../output:/app/output
     restart: unless-stopped
     environment:
       - TZ=Europe/London
+    # Optional secrets — create ../.env from .env.example first, then uncomment:
+    # env_file:
+    #   - ../.env

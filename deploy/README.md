@@ -33,17 +33,43 @@ git clone https://github.com/tgollogly/stop-assholes.git
 cd stop-assholes
 pip install -r requirements.txt
 python3 main.py init
-# Edit config.yaml — email, address, Slack webhook, optional API keys
-# Add screenshots to evidence/screenshots/
+# Edit config.yaml — email, address, meta_reports, Slack webhook
+# Add screenshots to evidence/screenshots/ (include Meta CS rejection screenshot)
 
 python3 main.py campaign init
 python3 main.py campaign sent --track meta --round 1
 
+cp .env.example .env   # optional — SMTP/Slack keys
 cd deploy
 docker compose up -d --build
 ```
 
 Logs: `output/cron.log` and `output/automation-log.jsonl`
+
+---
+
+## Does Docker auto-save my progress?
+
+**Yes.** The `output/` and `evidence/` folders are **bind-mounted** to your host machine. Campaign state, generated letters, monitor reports, and logs survive container restarts and rebuilds.
+
+| File / folder | Purpose |
+|---------------|---------|
+| `output/campaign/state.json` | Tracks which rounds you sent |
+| `output/campaign-package-*` | Generated letters |
+| `output/automation-log.jsonl` | Daily daemon log |
+| `output/campaign/seen_urls.json` | URLs already Slack-alerted |
+| `evidence/screenshots/` | Your screenshots (mount persists) |
+
+The container only runs cron + `python3 main.py daemon once`. It does **not** wipe data on exit.
+
+**You must still run once manually:**
+
+```bash
+python3 main.py campaign init
+python3 main.py campaign sent --track meta --round 1
+```
+
+Unless `auto_send_emails: true`, the daemon generates escalation packages but you email Meta yourself (or enable SMTP).
 
 ---
 
