@@ -1,109 +1,116 @@
-# Stop Assholes — Online Harassment Response Toolkit (UK/NI)
+# Stop Assholes — Multi-Round Removal Campaign (UK/NI)
 
-A command-line toolkit to help **Thomas Gollogly** (and others in similar situations) respond to harmful Facebook posts and Google search results under **Northern Ireland / UK law**.
+Automated **escalation campaign** to remove harmful Facebook content and Google search results. Generates professionally worded legal letters across **multiple rounds** — each refusal or silence triggers the next, stronger letter until removal or ICO enforcement.
 
-## What this does
+**No solicitor. No police.**
 
-| Command | Purpose |
-|---------|---------|
-| `python main.py init` | Create `config.yaml` and evidence folders |
-| `python main.py evidence` | Hash and package screenshots for solicitors/PSNI |
-| `python main.py letters` | Generate Meta GDPR + Google removal letter drafts |
-| `python main.py osint` | Document commenter handles and **legal** ID pathways |
-| `python main.py monitor` | Scan public search for indexed harmful URLs |
-| `python main.py guide` | Print NI legal action guide |
-| `python main.py all` | Run the full workflow |
-
-## What this cannot do
-
-**No software can automatically remove content from Facebook, Google, or "the whole internet."** Removal requires:
-
-1. Platform reports and formal legal requests (this tool generates those)
-2. Google delisting (hides from search — does not delete Facebook posts)
-3. PSNI investigation and/or NI High Court orders (for identifying anonymous posters)
-
-Attempting to "hack" or scrape Facebook violates law and platform terms.
-
-## Quick start
+## How it works
 
 ```bash
 pip install -r requirements.txt
-python main.py init
-# Edit config.yaml — add your email, address, Facebook post URL
-# Copy your screenshots into evidence/screenshots/
-python main.py all
+python3 main.py init          # create config.yaml
+# Edit config.yaml — your real email, address, phone
+# Add screenshots to evidence/screenshots/
+
+python3 main.py campaign init # round 1: Meta GDPR + Google
+# → Send letters from output/campaign-package-*/
+
+python3 main.py campaign sent --track meta --round 1
+
+# 7 days, no removal?
+python3 main.py campaign no-response --track meta
+
+# Meta explicitly refused?
+python3 main.py campaign refused --track meta --reason "They said..."
+
+# Check progress anytime
+python3 main.py campaign status
+
+# Content gone?
+python3 main.py campaign success
+python3 main.py close
 ```
 
-Review everything in the `output/` folder.
+## Escalation rounds (automatic)
 
-## Your case (pre-filled in config.example.yaml)
+### Meta track (6 rounds)
 
-- **Group:** AreWeDatingTheSameGuy? Northern Ireland
-- **Post:** Anonymous, 5 June — "Any red flags Thomas gollogly" + your photo
-- **Comments:** False allegations (drugging, sexual misconduct) plus gossip
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | UK GDPR Article 17 — formal erasure request | Day 0 — **start here** |
+| 2 | Article 12(3) deadline reminder | 7 days, no response |
+| 3 | Trust & Safety + Community Standards | 14 days |
+| 4 | Formal rebuttal of refusal | Meta refuses |
+| 5 | Final notice before ICO | 28 days |
+| 6 | Post-ICO continued non-compliance | After ICO complaint |
 
-Documented commenter handles:
+### Google track (3 rounds)
 
-| Handle | Type | Identity via public OSINT? |
-|--------|------|---------------------------|
-| BrightPanda3834 | Auto-style pseudonym | No — needs Meta disclosure |
-| IntelligentJaguar6700 | Auto-style pseudonym | No |
-| EmpatheticPeapod4820 | Auto-style pseudonym | No |
-| Anonymous participant 617 | Facebook anonymous | No |
-| Keerzo Diesel | Possible real display name | Only via legal process |
-| Pieter James | Possible real display name | Only via legal process |
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | Defamation delisting (UK) | Day 0 (parallel with Meta R1) |
+| 2 | Personal info / doxxing form | Day 7 |
+| 3 | Resubmission with Meta/ICO history | Day 30 |
 
-## Priority actions (do these today)
+### ICO track (1 round)
 
-### 1. Meta — UK GDPR Article 17
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | Full ICO complaint against Meta | After Meta round 4+ or 30 days |
 
-Email **privacy@facebook.com** with the generated letter (`01_meta_gdpr_article17.txt`).
+Each letter includes a **case reference** (e.g. `TG-ER-THOMAS-GOLLO-META-R1`) — quote it in every email.
 
-Also submit via: Facebook → Settings → Privacy → Access and control your info.
+## Commands
 
-**Deadline for Meta to respond: 1 month.**
+| Command | Purpose |
+|---------|---------|
+| `campaign init` | Start campaign, generate round 1 |
+| `campaign sent --track meta --round N` | Record that you sent round N |
+| `campaign refused --track meta --reason "..."` | Record refusal → auto-generates next round |
+| `campaign no-response --track meta` | No reply in 7 days → next round |
+| `campaign next` | Generate next escalation package |
+| `campaign status` | Dashboard |
+| `campaign success` | Mark removed |
+| `evidence` | SHA-256 evidence pack for ICO |
+| `monitor` | Find Google URLs to delist |
+| `close` | Facebook closure checklist |
+| `daemon once` | Daily VPS job (monitor + Slack + escalate) |
 
-### 2. Meta — Escalation
+## VPS automation (24/7 on a server)
 
-If your in-app report was ignored: https://www.facebook.com/help/contact/571927962827151
+Deploy on any Linux VPS — daily scans + Slack pings. Full guide: **`deploy/README.md`**
 
-Use `02_meta_defamation_escalation.txt`.
+```bash
+# In config.yaml: slack_webhook_url + optional SerpAPI key for daily photo search
+python3 main.py daemon once
 
-### 3. Google — Delisting
+# Docker — runs daily at 08:00 UTC
+cd deploy && docker compose up -d --build
+```
 
-- **Defamation:** https://support.google.com/legal/troubleshooter/1114905
-- **Personal info / image without consent:** https://support.google.com/websearch/contact/content_removal_form
-- **Monitor your name:** https://myactivity.google.com/results-about-you
+| Automated | Not possible |
+|-----------|--------------|
+| Daily name search | Force-delete Facebook |
+| Daily reverse image search (API key) | Auto-submit Google web forms |
+| Slack alerts on new URLs | Scrape private Facebook groups |
+| Next Meta letter every 7 days | Guaranteed removal |
+| Optional email to Meta (off by default) | |
 
-Run `python main.py monitor` to find URLs to include.
+## Your post (pre-configured)
 
-### 4. PSNI (if content stays up)
+**URL:** https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/
 
-False criminal allegations may be reportable. Call **101** with your evidence pack.
+## What success looks like
 
-Ask about malicious communications and harassment under NI law.
+1. Meta deletes post + comments (source removal)
+2. Google delists any indexed URLs (search removal)
+3. You close Facebook (`python3 main.py close`)
+4. Monthly `monitor` for 3 months to catch re-indexing
 
-### 5. Solicitor (if Meta refuses after 30 days)
+## Honest limits
 
-NI defamation law differs from England & Wales. A solicitor can:
-
-- Send a Letter Before Action
-- Apply for a **Norwich Pharmacal order** forcing Meta to reveal anonymous poster identities
-- Pursue damages under the Defamation Act (Northern Ireland) 2022
-
-## Legal references
-
-- [Defamation Act (Northern Ireland) 2022](https://www.legislation.gov.uk/nia/2022/30/enacted)
-- [ICO — Right to erasure](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/)
-- [Ask the Police — false social media posts](https://www.askthe.police.uk/faq/?id=10c5af20-a1e8-ec11-bb3c-000d3a0afe35)
-- [Google defamation removal](https://support.google.com/legal-help-center/answer/16833565)
-
-## Support contacts
-
-- **Citizens Advice NI:** 0800 915 4605
-- **ICO:** 0303 123 1113 — https://ico.org.uk/make-a-complaint/
-- **PSNI non-emergency:** 101
+Software cannot force instant deletion. This tool matches what Removify and similar firms do — **formal requests, resubmissions, escalating legal pressure** — except you run it yourself for free. Persistence across rounds is what wins.
 
 ---
 
-*This toolkit provides information and document templates only. It is not legal advice.*
+*Templates only — not legal advice.*
