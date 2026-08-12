@@ -68,6 +68,109 @@ def subject_line(config: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
+    """
+    Wording for who posted — avoids false claims when origin is uncertain.
+
+    post_origin in config.case.facebook:
+      - uncertain (default): safe if you may or may not have posted
+      - third_party: someone else posted your photo/name
+      - self: you posted and want everything removed including comments
+    """
+    fb = config["case"].get("facebook", {})
+    origin = (fb.get("post_origin") or "uncertain").strip().lower()
+
+    if origin == "third_party":
+        return {
+            "intro": (
+                "My photograph and name appear in a Facebook group post I did not create. "
+                "I did not authorise publication of my personal data in this context."
+            ),
+            "personal_data": (
+                "(a) My photograph (selfie), published without my knowledge or consent;\n"
+                "(b) My personal name in connection with that image and defamatory commentary;\n"
+                "(c) All comments that identify, describe, or publish false statements about me;\n"
+                "(d) Metadata linking my identity to this content."
+            ),
+            "consent_ground": (
+                "(b) Article 17(1)(c) — Withdrawal of consent. I never consented to this processing "
+                "and withdraw any implied consent. No lawful basis under Article 6(1) applies."
+            ),
+            "unlawful_ground": (
+                "(d) Article 17(1)(e) — Unlawful processing. Publication of my image without consent, "
+                "combined with false criminal and sexual allegations, is unlawful processing."
+            ),
+        }
+
+    if origin == "self":
+        return {
+            "intro": (
+                "My personal data appears in a Facebook group post. I request erasure of all "
+                "personal data at the URL below regardless of who created the post caption. "
+                "I do not consent to continued processing of my likeness, name, or associated "
+                "third-party comments on this thread."
+            ),
+            "personal_data": (
+                "(a) My photograph (selfie) at the URL below;\n"
+                "(b) My personal name in connection with that image and all commentary;\n"
+                "(c) All third-party comments that identify, describe, or publish false statements about me;\n"
+                "(d) Metadata linking my identity to this content."
+            ),
+            "consent_ground": (
+                "(b) Article 17(1)(c) — Withdrawal of consent. I withdraw consent for continued "
+                "processing of my personal data at this URL and request immediate erasure."
+            ),
+            "unlawful_ground": (
+                "(d) Article 17(1)(e) — Unlawful processing. Continued hosting of false criminal "
+                "and sexual allegations alongside my image causes unlawful harm."
+            ),
+        }
+
+    # uncertain — default; truthful when you do not know who posted
+    return {
+        "intro": (
+            "My photograph and full name appear in a Facebook group post at the URL below. "
+            "I request erasure of ALL my personal data at this location. I do not consent to "
+            "continued processing of my likeness, name, or the associated comments about me. "
+            "This request is made without prejudice as to who created the post; my right as "
+            "data subject to erasure applies regardless."
+        ),
+        "personal_data": (
+            "(a) My photograph (selfie) displayed at the URL below;\n"
+            "(b) My personal name — in connection with that image and all commentary on the thread;\n"
+            "(c) All comments that identify, describe, or publish false statements about me;\n"
+            "(d) Metadata linking my identity to this content (including group indexing and copies)."
+        ),
+        "consent_ground": (
+            "(b) Article 17(1)(c) — Withdrawal of consent. I do not consent to continued processing "
+            "of my personal data at this URL and withdraw any consent that may previously have applied."
+        ),
+        "unlawful_ground": (
+            "(d) Article 17(1)(e) — Unlawful processing. Hosting my image and name alongside false "
+            "criminal and sexual allegations causes unlawful processing and serious harm."
+        ),
+    }
+
+
+def publication_summary_for_google(config: dict[str, Any]) -> str:
+    origin = (config["case"].get("facebook", {}).get("post_origin") or "uncertain").lower()
+    if origin == "third_party":
+        return (
+            f'publishes my photograph and name without consent alongside comments containing '
+            f'false defamatory imputations.'
+        )
+    if origin == "self":
+        return (
+            f'contains my photograph and name alongside third-party comments with false '
+            f'defamatory imputations. I request delisting while source erasure is pursued.'
+        )
+    return (
+        f'contains my photograph and name alongside comments with false defamatory '
+        f'imputations. I request erasure and delisting of my personal data regardless of '
+        f'who created the post.'
+    )
+
+
 def false_allegations_summary() -> str:
     return (
         "The thread contains specific false imputations of serious criminal and sexual "

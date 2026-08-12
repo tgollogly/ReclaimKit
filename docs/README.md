@@ -1,41 +1,41 @@
 # ReclaimKit documentation
 
-| Document | Format | Description |
-|----------|--------|-------------|
-| **[Complete User Guide](COMPLETE-GUIDE.md)** | Markdown | Full step-by-step guide — setup, Meta GDPR campaign, Google, ICO, Facebook closure, FAQ |
-| **[Complete User Guide (PDF)](COMPLETE-GUIDE.pdf)** | PDF | Same content, printable / offline |
+| Document | Markdown | PDF |
+|----------|----------|-----|
+| **Quick Start** | [QUICK-START.md](QUICK-START.md) | [QUICK-START.pdf](QUICK-START.pdf) |
+| **Complete User Guide** | [COMPLETE-GUIDE.md](COMPLETE-GUIDE.md) | [COMPLETE-GUIDE.pdf](COMPLETE-GUIDE.pdf) |
+| **Auto-email (free Gmail)** | [AUTO-EMAIL-SETUP.md](AUTO-EMAIL-SETUP.md) | [AUTO-EMAIL-SETUP.pdf](AUTO-EMAIL-SETUP.pdf) |
+| **Cheap VPS + Docker** | [../deploy/VPS-GUIDE.md](../deploy/VPS-GUIDE.md) | [VPS-GUIDE.pdf](VPS-GUIDE.pdf) |
 
-## Quick links inside the guide
+## Start here
+
+1. **[QUICK-START.md](QUICK-START.md)** — 5-minute setup → email Meta today  
+2. **[COMPLETE-GUIDE.md](COMPLETE-GUIDE.md)** — full walkthrough, FAQ, checklist  
+3. **[AUTO-EMAIL-SETUP.md](AUTO-EMAIL-SETUP.md)** — free Gmail auto-send on VPS  
+
+## Quick links (complete guide)
 
 - [Will this work?](COMPLETE-GUIDE.md#1-will-this-work)
-- [Day 1 — start the campaign](COMPLETE-GUIDE.md#7-day-1--start-the-campaign)
-- [Send Round 1 to Meta](COMPLETE-GUIDE.md#8-how-to-send-round-1-to-meta)
-- [Facebook login FAQ](COMPLETE-GUIDE.md#4-facebook-login--what-matters)
-- [Close Facebook after removal](COMPLETE-GUIDE.md#12-closing-facebook-after-removal)
+- [Unsure who posted?](COMPLETE-GUIDE.md#24-unsure-who-posted-safe-wording)
 - [Meta rejected your report](COMPLETE-GUIDE.md#22-meta-rejected-your-report--what-now)
-- [Community Standards vs GDPR](COMPLETE-GUIDE.md#21-community-standards-vs-gdpr)
-- [Docker auto-save](COMPLETE-GUIDE.md#23-docker--does-it-auto-save)
+- [Docker auto-save](COMPLETE-GUIDE.md#23-docker--does-it-auto-save) (not the same as `doctor`)
+- [Job hunting impact](COMPLETE-GUIDE.md#25-job-hunting--will-this-hurt-you)
+- [Timeline to erasure](COMPLETE-GUIDE.md#26-how-long-until-content-is-erased)
 
-## Regenerate the PDF
-
-After editing `COMPLETE-GUIDE.md`:
+## Build all PDFs
 
 ```bash
-./scripts/build-guide-pdf.sh
+chmod +x scripts/build-all-pdfs.sh
+./scripts/build-all-pdfs.sh
 ```
 
-## Full audit
+## Full repo audit
 
 ```bash
-chmod +x scripts/audit.sh
 ./scripts/audit.sh
 ```
 
-Runs pytest, config validation, all letter generation, doctor, daemon dry-run, and PDF build.
-
-Requires `pandoc` and `wkhtmltopdf` (`sudo apt-get install pandoc wkhtmltopdf` on Debian/Ubuntu).
-
 ## Other docs
 
-- [Main README](../README.md) — project overview and quick start
-- [VPS deploy guide](../deploy/README.md) — Docker, cron, Slack, auto-email
+- [Main README](../README.md)
+- [VPS deploy](../deploy/README.md)

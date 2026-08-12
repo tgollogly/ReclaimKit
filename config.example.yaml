@@ -25,6 +25,9 @@ case:
     post_date: "2025-06-05"
     post_caption: "Any red flags Thomas gollogly"
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
+    # Who posted the caption? Use "uncertain" if you are not sure (safest — default).
+    # Options: uncertain | third_party | self
+    post_origin: uncertain
     reported_to_meta: true
     meta_report_reference: ""
     # Document in-app reports — letters cite these to show CS rejection != GDPR answer
@@ -80,15 +83,15 @@ automation:
   auto_start_campaign: true
   auto_escalate: true
   meta_escalation_days: 7
-  auto_send_emails: false
+  auto_send_emails: false   # set true after SMTP test — see docs/AUTO-EMAIL-SETUP.md
   slack_webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
   smtp:
-    enabled: false
+    enabled: false           # set true with Gmail App Password in .env
     host: "smtp.gmail.com"
     port: 587
     use_tls: true
     username: "your.email@gmail.com"
-    password: "app-specific-password"
+    password: ""             # use RECLAIMKIT_SMTP_PASSWORD in .env — never commit
     from_email: "your.email@gmail.com"
   image_search:
     provider: "none"

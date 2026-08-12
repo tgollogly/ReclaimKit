@@ -128,7 +128,8 @@ Place your selfie in `evidence/screenshots/` (or set `reference_image`).
 
 **Default is OFF.** When enabled, sends escalation letters to `privacy@facebook.com` via SMTP.
 
-Gmail example:
+Gmail example — **full guide: [docs/AUTO-EMAIL-SETUP.md](../docs/AUTO-EMAIL-SETUP.md)**
+
 ```yaml
 automation:
   auto_send_emails: true
@@ -137,11 +138,13 @@ automation:
     host: smtp.gmail.com
     port: 587
     username: you@gmail.com
-    password: "16-char-app-password"
     from_email: you@gmail.com
+    password: ""   # set RECLAIMKIT_SMTP_PASSWORD in .env
 ```
 
 Use a Gmail [App Password](https://support.google.com/accounts/answer/185833), not your main password.
+
+**When Meta replies to your inbox:** read Gmail manually and run `campaign refused`, `campaign success`, or reply with ID — ReclaimKit does not read your inbox automatically.
 
 ---
 

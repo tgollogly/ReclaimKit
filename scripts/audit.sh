@@ -39,10 +39,10 @@ echo ""
 echo "==> daemon dry-run"
 python3 main.py --config config.example.yaml daemon once --dry-run
 
+echo ""
 if command -v pandoc >/dev/null 2>&1; then
-  echo ""
-  echo "==> PDF build"
-  "$ROOT/scripts/build-guide-pdf.sh"
+  echo "==> PDF build (all docs)"
+  "$ROOT/scripts/build-all-pdfs.sh"
 fi
 
 echo ""

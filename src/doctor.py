@@ -56,11 +56,17 @@ def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001
             check("config_validate", False, str(exc))
 
+        fb = config.get("case", {}).get("facebook", {})
+        origin = (fb.get("post_origin") or "uncertain").lower()
+        if origin not in {"uncertain", "third_party", "self"}:
+            warn("post_origin", f"Invalid post_origin {origin!r} — use uncertain, third_party, or self")
+        elif origin == "uncertain":
+            check("post_origin_uncertain", True, "safe wording — no false claims about who posted")
+
         email = config.get("subject", {}).get("email", "")
         if any(m in email.lower() for m in PLACEHOLDER_EMAIL_MARKERS):
             warn("subject_email", f"Replace placeholder email: {email}")
 
-        fb = config.get("case", {}).get("facebook", {})
         if fb.get("reported_to_meta") and not fb.get("meta_reports"):
             warn(
                 "meta_reports",

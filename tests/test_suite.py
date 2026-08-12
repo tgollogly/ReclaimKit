@@ -206,6 +206,26 @@ def test_all_letter_rounds_from_example_config():
                 assert "ICO" in text or "Article 17" in text
 
 
+def test_uncertain_post_origin_wording(tmp_config):
+    _, cfg = tmp_config
+    cfg["case"]["facebook"]["post_origin"] = "uncertain"
+    letter = META_ROUNDS[1][1](cfg, {})
+    assert "without prejudice" in letter
+    assert "published without my knowledge or consent" not in letter
+
+
+def test_third_party_post_origin_wording(tmp_config):
+    _, cfg = tmp_config
+    cfg["case"]["facebook"]["post_origin"] = "third_party"
+    letter = META_ROUNDS[1][1](cfg, {})
+    assert "did not create" in letter or "did not authorise" in letter
+
+
+def test_config_example_has_post_origin_uncertain():
+    cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
+    assert cfg["case"]["facebook"].get("post_origin") == "uncertain"
+
+
 def test_search_queries_url_encoded():
     cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
     text = GOOGLE_ROUNDS[1][1](cfg, {})
