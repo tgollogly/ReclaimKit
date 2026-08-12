@@ -1,0 +1,7 @@
+config.yaml
+output/
+evidence/screenshots/*
+!evidence/screenshots/README.txt
+__pycache__/
+*.pyc
+.venv/

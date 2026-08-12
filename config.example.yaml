@@ -1,0 +1,65 @@
+# Copy to config.yaml and fill in your details.
+
+subject:
+  full_name: "Thomas Gollogly"
+  email: "your.email@example.com"
+  phone: "+44 XXXX XXXXXX"
+  address_line1: "Your address"
+  city: "Newry"
+  county: "County Down"
+  postcode: "BTXX XXX"
+  country: "United Kingdom"
+
+preferences:
+  # Removal-only path: no police, close Facebook after content is removed.
+  no_police: true
+  closing_facebook_after_removal: true
+
+case:
+  # Brief factual statement for legal letters (keep neutral and factual).
+  summary: >
+    False and damaging allegations were posted about me in a Facebook group
+    alongside my photograph without consent. I deny all allegations and am
+    seeking removal under UK GDPR and defamation law.
+
+  facebook:
+    group_name: "AreWeDatingTheSameGuy? Northern Ireland"
+    post_date: "2025-06-05"
+    post_caption: "Any red flags Thomas gollogly"
+    # Direct link to the post (Share > Copy link).
+    post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
+    reported_to_meta: true
+    meta_report_reference: ""
+
+  alleged_commenters:
+    - display_name: "BrightPanda3834"
+      comment: "Like to put stuff in your drink and do inappropriate things to family members"
+      posted_approx: "9 weeks before screenshot"
+    - display_name: "IntelligentJaguar6700"
+      comment: "well isn't he just a catch if he does this"
+      posted_approx: "9 weeks before screenshot"
+    - display_name: "Keerzo Diesel"
+      comment: "Awk out Marty Ban. He loves sunglasses...nearly as much as his uncle Ray"
+      posted_approx: "9 weeks before screenshot"
+    - display_name: "Pieter James"
+      comment: "No, but he was wearing red lingerie the last night I saw him.."
+      posted_approx: "9 weeks before screenshot"
+    - display_name: "EmpatheticPeapod4820"
+      comment: "Is he from Omagh or Enniskillen something so familiar about him"
+      posted_approx: "8 weeks before screenshot"
+    - display_name: "Anonymous participant 617"
+      comment: "Please can anyone tell me anymore about this man. Looks very familiar to a guy my sister is seeing x"
+      posted_approx: "8 weeks before screenshot"
+
+evidence:
+  # Folder containing your screenshots (PNG/JPG).
+  screenshots_dir: "./evidence/screenshots"
+  output_dir: "./output"
+
+monitor:
+  search_queries:
+    - '"Thomas Gollogly"'
+    - '"Thomas gollogly" Facebook'
+    - '"Thomas gollogly" "AreWeDatingTheSameGuy"'
+  # Region for DuckDuckGo (uk-en for UK-focused results).
+  region: "uk-en"
