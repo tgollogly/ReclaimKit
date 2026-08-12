@@ -97,5 +97,6 @@ automation:
     reference_image: ""
 
 campaign:
+  # Fallback if automation.meta_escalation_days is omitted (default 7)
   meta_reminder_days: 7
-  ico_trigger_after_meta_round: 4
+  ico_trigger_after_meta_round: 4  # documented workflow — file ICO after Meta round 4+

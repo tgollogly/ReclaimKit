@@ -193,7 +193,7 @@ See [Section 13](#13-daily-monitoring-and-vps-automation) and `deploy/README.md`
 
 ```bash
 python3 main.py doctor          # health check
-python3 -m pytest tests/ -v     # run test suite (12 tests)
+python3 -m pytest tests/ -v     # run test suite (17 tests)
 ```
 
 ---
@@ -201,6 +201,9 @@ python3 -m pytest tests/ -v     # run test suite (12 tests)
 ## 6. Configure your case
 
 Edit **`config.yaml`** (never commit this file — it contains personal details).
+
+If you created `config.yaml` before the latest update, copy new fields from
+**`config.example.yaml`** — especially `case.facebook.meta_reports` and `preferences`.
 
 ### Subject block — fill with your real details
 
@@ -724,9 +727,10 @@ Then proceed toward ICO if still not removed after 30 days.
 
 ```bash
 python3 main.py doctor
+python3 main.py --config config.example.yaml doctor   # validate template
 ```
 
-Checks: config file exists, required fields filled, post URL valid, screenshots present, letters generate correctly, dependencies installed.
+Core checks must pass (marked ✓). Warnings (marked !) are items you must fix before emailing Meta — placeholder email, missing screenshots, etc.
 
 ### Common issues
 
@@ -745,7 +749,14 @@ Checks: config file exists, required fields filled, post URL valid, screenshots 
 python3 -m pytest tests/ -v
 ```
 
-All 12 tests should pass.
+All 17 tests should pass.
+
+Run the full audit script:
+
+```bash
+chmod +x scripts/audit.sh
+./scripts/audit.sh
+```
 
 ---
 
@@ -825,7 +836,7 @@ These are **two different doors** into Meta. ReclaimKit is built for the legal o
 If you received: *"We didn't remove the photo"* / *"doesn't go against Community Standards"*:
 
 1. **Save a screenshot** to `evidence/screenshots/`
-2. Add it to `config.yaml` under `meta_reports` (see config.example.yaml)
+2. Add under `case.facebook.meta_reports` in `config.yaml` (see config.example.yaml)
 3. **Send GDPR Round 1 anyway** — the letter now cites the rejection explicitly
 4. Record refusal:
 

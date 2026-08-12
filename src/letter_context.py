@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import quote_plus
 
 
 def today_long() -> str:
@@ -161,6 +162,7 @@ def search_queries_block(config: dict[str, Any]) -> str:
         return "  (Add monitor.search_queries in config.yaml and run: python3 main.py monitor)"
     lines = []
     for q in queries:
-        lines.append(f'  - Google search: https://www.google.com/search?q={q.replace(" ", "+")}')
+        encoded = quote_plus(q)
+        lines.append(f"  - Google search: https://www.google.com/search?q={encoded}")
     lines.append("  - Add any result URLs from output/search-monitor-*.txt after running monitor")
     return "\n".join(lines)

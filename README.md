@@ -111,16 +111,24 @@ Each letter includes a case reference (e.g. `TG-ER-THOMAS-GOLLO-META-R1`).
 
 | Command | Purpose |
 |---------|---------|
-| `campaign init` | Start campaign, generate round 1 |
+| `init` | Create `config.yaml` and evidence folders |
+| `evidence` | Build hashed evidence pack |
+| `letters` | Generate standalone takedown letters |
+| `campaign init` | Start campaign + Round 1 package |
+| `campaign status` | Show progress dashboard |
 | `campaign sent --track meta --round N` | Record submission |
-| `campaign no-response --track meta` | 7 days silence → next round |
-| `campaign refused --track meta --reason "..."` | Refusal → rebuttal letter |
-| `campaign status` | Dashboard |
+| `campaign no-response --track meta` | 7-day silence → next round |
+| `campaign refused --track meta --reason "..."` | Refusal → rebuttal |
+| `campaign next --track meta --round N` | Generate specific round |
 | `campaign success` | Mark content removed |
-| `daemon once` | Daily monitor + Slack + escalate |
-| `doctor` | Health check — config, deps, letters |
 | `monitor` | Scan search for indexed URLs |
+| `osint` | Document commenter handles |
+| `guide` | Print removal action guide |
 | `close` | Facebook closure checklist |
+| `doctor` | Validate config, deps, letters |
+| `daemon once` | Daily automation cycle |
+| `daemon once --dry-run` | Test automation without writes |
+| `all` | Evidence + campaign + osint + monitor |
 
 VPS deploy: **`deploy/README.md`**
 
@@ -144,8 +152,10 @@ cd deploy && docker compose up -d --build
 ## 🧪 Test & verify
 
 ```bash
-python3 -m pytest tests/ -v      # automated test suite
+python3 -m pytest tests/ -v      # 17 automated tests
 python3 main.py doctor             # validate your setup
+python3 main.py --config config.example.yaml doctor
+./scripts/audit.sh                 # full repo audit
 python3 main.py daemon once --dry-run
 ```
 
