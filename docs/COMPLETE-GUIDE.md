@@ -5,7 +5,7 @@
 | Field | Details |
 |-------|---------|
 | **For** | Anyone removing harmful social content |
-| **Toolkit** | [ReclaimKit](https://github.com/tgollogly/reclaimkit) |
+| **Toolkit** | [ReclaimKit](https://github.com/tgollogly/ReclaimKit) |
 | **Version** | August 2026 |
 | **Legal basis** | Configurable — set `jurisdiction` in config.yaml for your country's privacy law |
 
@@ -182,7 +182,7 @@ You are **currently logged into Facebook**. That is useful now. You plan to **cl
 ### Option A — Local (quickest to start)
 
 ```bash
-git clone https://github.com/tgollogly/reclaimkit.git
+git clone https://github.com/tgollogly/ReclaimKit.git
 cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init
@@ -330,10 +330,10 @@ output/
   campaign-package-YYYYMMDD.../
     README.txt
     round-01-meta/
-      meta_r1_gdpr_initial.txt         (EMAIL THIS TO META)
+      meta_r1_erasure_initial.txt      (EMAIL THIS TO META)
       SUBMIT.txt                       (step-by-step instructions)
     round-01-google/
-      google_r1_defamation.txt
+      google_r1_removal.txt
       SUBMIT.txt
   evidence-pack-YYYYMMDD.../             (attach to emails if needed)
 ```
@@ -348,7 +348,7 @@ This is the **most important step**. It starts the legal response clock for your
 
 ### Step-by-step
 
-1. Open `output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`
+1. Open `output/campaign-package-.../round-01-meta/meta_r1_erasure_initial.txt`
 2. Open your email client (Gmail, Outlook, etc.)
 3. **To:** `privacy@facebook.com`
 4. **CC (optional):** `dpo@facebook.com`
@@ -442,7 +442,7 @@ Google removal **hides content from search** — it does not delete the Facebook
 
 ### Round 1 — Defamation
 
-1. Open `output/campaign-package-.../round-01-google/google_r1_defamation.txt`
+1. Open `output/campaign-package-.../round-01-google/google_r1_removal.txt`
 2. Follow the URL in the letter header (Google Legal Troubleshooter)
 3. Paste relevant sections into the form
 4. Record: `python3 main.py campaign sent --track google --round 1`
@@ -629,7 +629,7 @@ Open Ubuntu (WSL terminal):
 
 ```bash
 sudo apt update && sudo apt install -y python3 python3-pip git
-git clone https://github.com/tgollogly/reclaimkit.git
+git clone https://github.com/tgollogly/ReclaimKit.git
 cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init
@@ -747,7 +747,7 @@ Core checks must pass (marked ✓). Warnings (marked !) are items you must fix b
 | `config.yaml not found` | Run `python3 main.py init` |
 | `No campaign found` | Run `python3 main.py campaign init` |
 | `No screenshots found` | Add PNG/JPG files to `evidence/screenshots/` |
-| Monitor import error | `pip install duckduckgo-search` |
+| Monitor import error | `pip install ddgs` |
 | SMTP auto-email fails | Use Gmail App Password, not main password; set `RECLAIMKIT_SMTP_PASSWORD` |
 | Letters missing your name | Edit `config.yaml` subject block |
 

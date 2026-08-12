@@ -21,7 +21,7 @@ Write-Host ""
 # Packages newly installed by: pip install -r requirements.txt
 # (Skips pyyaml/Pillow/requests/etc. if you use them for other projects)
 $PackagesToRemove = @(
-    "duckduckgo-search",
+    "ddgs",
     "pytest",
     "pluggy",
     "iniconfig",
