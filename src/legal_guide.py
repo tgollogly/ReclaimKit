@@ -1,98 +1,149 @@
 from __future__ import annotations
 
-from pathlib import Path
+
+def print_legal_guide(no_police: bool = True) -> str:
+    if no_police:
+        return _removal_only_guide()
+    return _full_guide()
 
 
-def print_legal_guide() -> str:
-    guide = """
+def print_close_facebook_guide() -> str:
+    return """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  NORTHERN IRELAND — ONLINE DEFAMATION & HARASSMENT ACTION GUIDE              ║
-║  (Information only — not legal advice. Consult a NI solicitor.)              ║
+║  REMOVE CONTENT, THEN CLOSE FACEBOOK — STEP BY STEP                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
-YOUR SITUATION
+Do these in order. Do NOT delete your account until removal is confirmed or
+you have exhausted Meta's GDPR process — you may lose access to report links.
+
+STEP 1 — SUBMIT REMOVAL REQUESTS (before closing account)
+---------------------------------------------------------
+  □ Run: python3 main.py letters
+  □ Email privacy@facebook.com with 01_meta_gdpr_article17.txt
+  □ Submit escalation: facebook.com/help/contact/571927962827151
+  □ Keep screenshots in evidence/screenshots/ (already have these)
+  □ Save Meta's reply emails — you need proof if you escalate to ICO
+
+STEP 2 — GOOGLE (parallel, works without Facebook account)
+----------------------------------------------------------
+  □ Run: python3 main.py monitor
+  □ Submit any harmful URLs via Google's forms (see output/takedown-letters/)
+  □ Enable "Results about you": myactivity.google.com/results-about-you
+
+STEP 3 — WAIT FOR META (up to 1 month for GDPR)
+-----------------------------------------------
+  □ Check the group post is gone (ask someone still in the group, or check
+    before you close — you won't see it after deactivation)
+  □ If no response in 2 weeks, send the escalation letter again
+  □ If refused after 30 days: ICO complaint (no police needed)
+        https://ico.org.uk/make-a-complaint/
+
+STEP 4 — CLOSE FACEBOOK (after removal confirmed OR after GDPR deadline)
+------------------------------------------------------------------------
+  Deactivate (reversible, 30 days) vs Delete (permanent):
+
+  DEACTIVATE (temporary — profile hidden, can log back in):
+    Settings & privacy → Settings → Accounts Centre → Personal details
+    → Account ownership and control → Deactivation or deletion
+
+  DELETE PERMANENTLY:
+    Same path → Delete account → Confirm
+
+  Before deleting:
+    □ Download your data: Settings → Download your information
+    □ Remove apps connected to Facebook (Settings → Apps and websites)
+    □ Update logins on sites where you used "Log in with Facebook"
+    □ Save any evidence / report reference numbers locally first
+
+  Note: Deleting your account does NOT remove the group post. The post must
+  be removed by Meta while your request is active, or via GDPR/ICO pressure.
+
+STEP 5 — ONGOING (after Facebook is closed)
+-------------------------------------------
+  □ Run python3 main.py monitor monthly for 3–6 months
+  □ Re-submit Google delisting if new URLs appear
+  □ If post reappears on another site, use same Google + GDPR approach
+
+WHAT YOU ARE NOT DOING (by choice — that's fine)
+-------------------------------------------------
+  ✗ PSNI / police report
+  ✗ Court / solicitor (unless Meta and ICO both fail)
+  ✗ Confronting commenters
+
+Support without police:
+  ICO (data protection): ico.org.uk | 0303 123 1113
+  Citizens Advice NI: 0800 915 4605
+"""
+
+
+def _removal_only_guide() -> str:
+    return """
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  REMOVAL-ONLY GUIDE — NO POLICE                                              ║
+║  Get content removed → close Facebook → monitor Google                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+YOUR GOAL
+---------
+Remove the post and comments, delist from Google if indexed, then close Facebook.
+You do not need police involvement for this path.
+
+PRIORITY ORDER
 --------------
-Private Facebook group post with your photo + name + false criminal allegations.
-This can be addressed through multiple parallel routes:
+1. python3 main.py letters     → generate Meta GDPR + Google drafts
+2. Email privacy@facebook.com  → starts 1-month UK GDPR clock
+3. Escalation form if ignored  → facebook.com/help/contact/571927962827151
+4. python3 main.py monitor      → check Google, submit delisting if needed
+5. Confirm removal             → then python3 main.py close for account steps
+6. ICO if Meta refuses (30 days) → ico.org.uk/make-a-complaint/  (no police)
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ ROUTE 1: META REMOVAL (fastest if successful)                               │
+│ META REMOVAL (main lever)                                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ • In-app report (you've done this — good)                                     │
-│ • UK GDPR Article 17 email to privacy@facebook.com (use generated letter)     │
-│ • Escalation form: facebook.com/help/contact/571927962827151                  │
-│ • Timeline: Meta must respond to GDPR requests within 1 month                  │
-│ • If refused: complain to ICO (ico.org.uk/make-a-complaint)                   │
+│ • UK GDPR Article 17 — your photo + name used without consent                │
+│ • False allegations in comments — unlawful processing causing harm           │
+│ • Meta must respond within 1 calendar month                                  │
+│ • Escalation if in-app report was ignored                                    │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ ROUTE 2: GOOGLE DELISTING (hides from search, not source)                   │
+│ GOOGLE (after Meta — hides from search, not source)                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ • Defamation form: support.google.com/legal/troubleshooter/1114905          │
-│ • Personal info form: support.google.com/websearch/contact/content_removal  │
-│ • "Results about you": myactivity.google.com/results-about-you                │
-│ • Effect: URLs hidden from Google.co.uk — content may still exist on Facebook │
+│ • Defamation: support.google.com/legal/troubleshooter/1114905                │
+│ • Personal info: support.google.com/websearch/contact/content_removal_form   │
+│ • Works even after you delete Facebook                                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ ROUTE 3: CRIMINAL (PSNI) — for false criminal allegations                   │
+│ IF META REFUSES — ICO, NOT POLICE                                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ • Call 101 or visit station with evidence pack                                │
-│ • False allegations of drugging / sexual offences may be:                     │
-│     - Malicious Communications (Communications Act 2003 s.127)                │
-│     - Harassment (Protection from Harassment (NI) Order 1997)                 │
-│ • PSNI CAN request poster identities from Meta (you cannot via OSINT)         │
-│ • Askthe.police.uk NI FAQ: askthe.police.uk                                   │
+│ • Complaint to Information Commissioner's Office                             │
+│ • Free, no court, no police                                                  │
+│ • Reference your GDPR request date and Meta's refusal                        │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ ROUTE 4: CIVIL DEFAMATION (NI High Court)                                   │
+│ CLOSE FACEBOOK — run: python3 main.py close                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ • Defamation Act (Northern Ireland) 2022                                      │
-│ • You must prove statements are false and caused serious harm                 │
-│ • Solicitor can send Letter Before Action to Meta + anonymous posters         │
-│ • Norwich Pharmacal order: court compels Meta to reveal poster identities     │
-│ • NI differs from England & Wales — use NI-experienced media solicitor        │
-│ • Examples: Phoenix Law Belfast, Carson McDowell, Tughan & Co                 │
+│ • Wait for removal OR send GDPR request first (needs active account to       │
+│   track; evidence pack preserves everything offline)                         │
+│ • Deleting Facebook does NOT remove the group post — Meta must delete it     │
 └─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ROUTE 5: IDENTIFYING ANONYMOUS COMMENTERS                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ WHAT THIS TOOL CAN DO:                                                        │
-│   • Document handles (BrightPanda3834, Keerzo Diesel, etc.)                   │
-│   • Classify which are anonymous vs possible real names                         │
-│   • Prepare evidence for police/solicitor                                       │
-│                                                                               │
-│ WHAT YOU CANNOT DO LEGALLY YOURSELF:                                          │
-│   • "OSINT doxing" — tracing people via private data is risky and may be      │
-│     illegal under UK GDPR and harassment law                                  │
-│   • Automated scraping of Facebook — violates ToS and may be unlawful         │
-│                                                                               │
-│ REALISTIC PATH TO IDENTITIES:                                                 │
-│   • PSNI investigation → Meta disclosure                                      │
-│   • Civil court order (Norwich Pharmacal) → Meta reveals account details     │
-│   • Handles like "Keerzo Diesel" / "Pieter James" may be real display names  │
-│     — note these for your solicitor; still need Meta to confirm                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-PRIORITY ORDER (recommended)
-----------------------------
-1. Run this tool: evidence pack + takedown letters + monitor
-2. Email Meta GDPR letter TODAY (starts 1-month clock)
-3. Submit Google removal for any URLs found in monitor report
-4. PSNI report if criminal allegations remain after 7 days
-5. Solicitor consultation if Meta does not remove within 30 days
 
 WHAT NO SOFTWARE CAN DO
 -----------------------
-• Force Facebook/Google to delete content instantly
-• Access private group data without your login
-• Reliably identify anonymous Facebook users from public internet alone
-• Remove content from "the whole internet" — each platform requires separate action
+• Force instant removal — Meta has up to 1 month for GDPR
+• Remove from every website — focus Meta + Google covers 99% of visibility
 
-CITIZENS ADVICE NI: 0800 915 4605 | citizensadvice.org.uk/ni
-ICO (data protection): ico.org.uk | 0303 123 1113
-PSNI non-emergency: 101
+Run: python3 main.py close  — full Facebook closure checklist
 """
-    return guide
+
+
+def _full_guide() -> str:
+    return _removal_only_guide() + """
+
+OPTIONAL ROUTES (not in your removal-only plan)
+-----------------------------------------------
+• PSNI 101 — only if you later want criminal investigation
+• NI solicitor — only if Meta + ICO both fail and you want court action
+"""

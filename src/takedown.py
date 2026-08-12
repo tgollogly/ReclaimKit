@@ -292,7 +292,8 @@ IMPORTANT:
   - No software can force removal. These are the official legal channels.
   - Google UK delisting does not delete Facebook content.
   - If Meta refuses after 30 days, complain to ICO: https://ico.org.uk/make-a-complaint/
-  - For serious false criminal allegations, consider PSNI report (101) and a NI solicitor.
+  - If Meta refuses after 30 days, complain to ICO (no police required).
+  - After removal, close Facebook: run python3 main.py close
 """,
         encoding="utf-8",
     )

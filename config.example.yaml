@@ -10,6 +10,11 @@ subject:
   postcode: "BTXX XXX"
   country: "United Kingdom"
 
+preferences:
+  # Removal-only path: no police, close Facebook after content is removed.
+  no_police: true
+  closing_facebook_after_removal: true
+
 case:
   # Brief factual statement for legal letters (keep neutral and factual).
   summary: >

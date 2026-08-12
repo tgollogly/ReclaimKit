@@ -9,7 +9,7 @@ from pathlib import Path
 
 from src.config import load_config
 from src.evidence import build_evidence_pack
-from src.legal_guide import print_legal_guide
+from src.legal_guide import print_close_facebook_guide, print_legal_guide
 from src.monitor import write_monitor_report
 from src.osint import write_osint_report
 from src.takedown import write_takedown_letters
@@ -69,8 +69,19 @@ def cmd_monitor(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_guide(_: argparse.Namespace) -> int:
-    print(print_legal_guide())
+def cmd_guide(args: argparse.Namespace) -> int:
+    config = None
+    try:
+        config = load_config(args.config)
+    except FileNotFoundError:
+        pass
+    no_police = config.get("preferences", {}).get("no_police", True) if config else True
+    print(print_legal_guide(no_police=no_police))
+    return 0
+
+
+def cmd_close(_: argparse.Namespace) -> int:
+    print(print_close_facebook_guide())
     return 0
 
 
@@ -122,7 +133,8 @@ def main() -> int:
     sub.add_parser("letters", help="Generate Meta GDPR and Google removal letter drafts")
     sub.add_parser("osint", help="Document commenter handles and legal ID pathways")
     sub.add_parser("monitor", help="Scan public search for indexed harmful URLs")
-    sub.add_parser("guide", help="Print NI legal action guide")
+    sub.add_parser("guide", help="Print removal-focused action guide")
+    sub.add_parser("close", help="Checklist: remove content then close Facebook")
     sub.add_parser("all", help="Run evidence + letters + osint + monitor")
 
     args = parser.parse_args()
@@ -133,6 +145,7 @@ def main() -> int:
         "osint": cmd_osint,
         "monitor": cmd_monitor,
         "guide": cmd_guide,
+        "close": cmd_close,
         "all": cmd_all,
     }
     return handlers[args.command](args)

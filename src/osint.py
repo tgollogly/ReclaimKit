@@ -103,15 +103,30 @@ def analyse_osint(config: dict[str, Any]) -> dict[str, Any]:
             "Location/name mention extraction from known comments",
             "No attempt to contact or harass identified handles",
         ],
-        "recommended_next_steps": [
-            "Preserve screenshots (run: python main.py evidence)",
-            "Submit Meta GDPR letter and escalation (run: python main.py letters)",
-            "If criminal allegations persist, report to PSNI on 101 with evidence pack",
-            "Consult NI defamation solicitor for Norwich Pharmacal order if needed",
-            "Do NOT engage with commenters publicly — this can harm legal claims",
-        ],
+        "recommended_next_steps": _recommended_steps(config),
     }
     return report
+
+
+def _recommended_steps(config: dict[str, Any]) -> list[str]:
+    prefs = config.get("preferences", {})
+    steps = [
+        "Preserve screenshots (run: python3 main.py evidence)",
+        "Submit Meta GDPR letter and escalation (run: python3 main.py letters)",
+        "Do NOT engage with commenters publicly",
+    ]
+    if prefs.get("no_police", True):
+        steps.extend([
+            "If Meta refuses after 30 days, complain to ICO (no police needed)",
+            "After removal confirmed, close Facebook (run: python3 main.py close)",
+            "Monitor Google monthly after account closure (python3 main.py monitor)",
+        ])
+    else:
+        steps.extend([
+            "If criminal allegations persist, consider PSNI report on 101 with evidence pack",
+            "Consult NI defamation solicitor for Norwich Pharmacal order if needed",
+        ])
+    return steps
 
 
 def classify_username(name: str) -> str:
