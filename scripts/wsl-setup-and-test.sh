@@ -2,7 +2,7 @@
 # ReclaimKit — WSL + Docker setup and test (run inside Ubuntu/WSL)
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/tgollogly/stop-assholes.git}"
+REPO_URL="${REPO_URL:-https://github.com/tgollogly/ReclaimKit.git}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/stop-assholes}"
 
 echo "============================================"
