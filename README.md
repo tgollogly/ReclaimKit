@@ -49,7 +49,7 @@ ReclaimKit runs in four phases:
 sudo apt update && sudo apt install -y git
 git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
 cd ~/reclaimkit
-chmod +x scripts/wsl-setup-and-test.sh
+chmod +x scripts/wsl-setup-and-test.sh scripts/wsl-reset-repo.sh
 ./scripts/wsl-setup-and-test.sh
 ```
 
@@ -58,8 +58,19 @@ Pass = **`SETUP COMPLETE`**
 **Or from PowerShell (one line):**
 
 ```powershell
-wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-windows.ps1 | iex
 ```
+
+**After setup — edit config** (do **not** run `nano` in PowerShell; it only works in Linux):
+
+```powershell
+wsl -d Ubuntu nano ~/reclaimkit/config.yaml
+```
+
+Or open **Ubuntu** from the Start menu and run `nano ~/reclaimkit/config.yaml`.
+
+**Re-run setup** without deleting: `./scripts/wsl-setup-and-test.sh` (inside Ubuntu).  
+**Fresh reinstall:** `./scripts/wsl-reset-repo.sh` then `./scripts/wsl-setup-and-test.sh`.
 
 ### Linux / Mac
 
