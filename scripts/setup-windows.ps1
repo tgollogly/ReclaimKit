@@ -13,7 +13,7 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Clean up bad PowerShell clone if present
-$badClone = Join-Path $env:USERPROFILE "~\stop-assholes"
+$badClone = Join-Path $env:USERPROFILE "~\reclaimkit"
 if (Test-Path $badClone) {
     Write-Host "[..] Removing wrong PowerShell clone at $badClone" -ForegroundColor Yellow
     Remove-Item -Recurse -Force $badClone -ErrorAction SilentlyContinue
@@ -40,7 +40,7 @@ Write-Host "  Make sure Docker Desktop is open and says 'Running'." -ForegroundC
 Start-Sleep -Seconds 2
 
 $bashCmd = @'
-sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh
+sudo apt update && sudo apt install -y git && rm -rf ~/reclaimkit && git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh
 '@
 
 Write-Host "[3/3] Running setup inside Linux (this takes a few minutes)..." -ForegroundColor Green
@@ -66,9 +66,9 @@ Write-Host "============================================" -ForegroundColor Green
 Write-Host " NEXT STEPS" -ForegroundColor Green
 Write-Host "============================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "  1. Open Ubuntu (Start menu) and run:  nano ~/stop-assholes/config.yaml"
-Write-Host "  2. Add screenshots to:  ~/stop-assholes/evidence/screenshots/"
-Write-Host "  3. Email Meta using the letter in ~/stop-assholes/output/campaign-package-.../"
+Write-Host "  1. Open Ubuntu (Start menu) and run:  nano ~/reclaimkit/config.yaml"
+Write-Host "  2. Add screenshots to:  ~/reclaimkit/evidence/screenshots/"
+Write-Host "  3. Email Meta using the letter in ~/reclaimkit/output/campaign-package-.../"
 Write-Host ""
 Write-Host "Full guide: https://github.com/tgollogly/ReclaimKit/blob/main/README.md"
 Write-Host ""

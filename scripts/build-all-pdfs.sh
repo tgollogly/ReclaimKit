@@ -10,7 +10,7 @@ build_one() {
   local pdf="$2"
   local title="$3"
   pandoc "$md" -o "$pdf" --standalone --pdf-engine=wkhtmltopdf --css="$CSS" \
-    --metadata title="$title" --metadata author="Thomas Gollogly" \
+    --metadata title="$title" --metadata author="ReclaimKit contributors" \
     -V margin-top=18mm -V margin-bottom=18mm \
     -V margin-left=16mm -V margin-right=16mm
   echo "Wrote $pdf"

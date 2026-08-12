@@ -1,71 +1,54 @@
 # Copy to config.yaml and fill in your details.
 
 subject:
-  full_name: "Thomas Gollogly"
+  full_name: "Your Full Name"
   email: "your.email@example.com"
-  phone: "+44 XXXX XXXXXX"
-  address_line1: "Your address"
-  city: "Newry"
-  county: "County Down"
-  postcode: "BTXX XXX"
-  country: "United Kingdom"
+  phone: "+1 555 0100"
+  address_line1: "Your street address"
+  city: "Your city"
+  region: ""              # state/province — optional
+  postcode: "12345"
+  country: "Your country"
+
+# Privacy law settings for your jurisdiction (edit for your country)
+jurisdiction:
+  privacy_law: "applicable data protection law"   # e.g. GDPR, CCPA, LGPD
+  erasure_article: "Article 17"
+  regulator_name: "your data protection authority"
+  regulator_url: "https://example.com/file-a-complaint"
+  response_days: 30
+  google_delisting_region: "Your country"
 
 preferences:
-  no_police: true
-  closing_facebook_after_removal: true
+  closing_platform_after_removal: false
 
 case:
   summary: >
-    False and damaging allegations were posted about me in a Facebook group
+    False and damaging content was posted about me on a social platform
     alongside my photograph without consent. I deny all allegations and am
-    seeking removal under UK GDPR and defamation law.
+    seeking removal under applicable privacy and platform policies.
 
   facebook:
-    group_name: "AreWeDatingTheSameGuy? Northern Ireland"
+    group_name: "Example Community Group"
     post_date: "2025-06-05"
-    post_caption: "Any red flags Thomas gollogly"
-    post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
-    # Who posted the caption? Use "uncertain" if you are not sure (safest — default).
-    # Options: uncertain | third_party | self
-    post_origin: uncertain
+    post_caption: "Example caption text"
+    post_url: "https://www.facebook.com/groups/EXAMPLE/posts/EXAMPLE/"
+    post_origin: uncertain    # uncertain | third_party | self
     reported_to_meta: true
     meta_report_reference: ""
-    # Document in-app reports — letters cite these to show CS rejection != GDPR answer
     meta_reports:
-      - type: "In-app content report (photo/post)"
-        date: "2026-08-12"
-        outcome: "Rejected — We didn't remove the photo; does not violate Community Standards"
-        notes: "Attach screenshot of Meta support message"
-      - type: "Group report (hate speech)"
-        date: "2026-08-12"
-        outcome: "Submitted — awaiting outcome"
+      - type: "In-app content report"
+        date: "2026-01-01"
+        outcome: "Rejected — content does not violate Community Standards"
+        notes: "Attach screenshot of platform support message"
     group_pattern: >
-      The group follows an AreWeDatingTheSameGuy pattern: men's photos and names
-      posted soliciting unverified allegations. The same format has harmed multiple
-      people. My request is for erasure of MY data only.
-
-  # Optional — override default harm wording in letters
-  # harm_statement: "Custom paragraph describing impact on you."
+      The group publishes individuals' photos soliciting unverified allegations.
+      My request is for erasure of MY data only.
 
   alleged_commenters:
-    - display_name: "BrightPanda3834"
-      comment: "Like to put stuff in your drink and do inappropriate things to family members"
-      posted_approx: "9 weeks before screenshot"
-    - display_name: "IntelligentJaguar6700"
-      comment: "well isn't he just a catch if he does this"
-      posted_approx: "9 weeks before screenshot"
-    - display_name: "Keerzo Diesel"
-      comment: "Awk out Marty Ban. He loves sunglasses...nearly as much as his uncle Ray"
-      posted_approx: "9 weeks before screenshot"
-    - display_name: "Pieter James"
-      comment: "No, but he was wearing red lingerie the last night I saw him.."
-      posted_approx: "9 weeks before screenshot"
-    - display_name: "EmpatheticPeapod4820"
-      comment: "Is he from Omagh or Enniskillen something so familiar about him"
-      posted_approx: "8 weeks before screenshot"
-    - display_name: "Anonymous participant 617"
-      comment: "Please can anyone tell me anymore about this man. Looks very familiar to a guy my sister is seeing x"
-      posted_approx: "8 weeks before screenshot"
+    - display_name: "ExampleUser1"
+      comment: "Example harmful comment"
+      posted_approx: "date unknown"
 
 evidence:
   screenshots_dir: "./evidence/screenshots"
@@ -73,25 +56,24 @@ evidence:
 
 monitor:
   search_queries:
-    - '"Thomas Gollogly"'
-    - '"Thomas gollogly" Facebook'
-    - '"Thomas gollogly" "AreWeDatingTheSameGuy"'
-  region: "uk-en"
+    - '"Your Full Name"'
+    - '"Your Full Name" Facebook'
+  region: "en"
 
 automation:
   enabled: true
   auto_start_campaign: true
   auto_escalate: true
   meta_escalation_days: 7
-  auto_send_emails: false   # set true after SMTP test — see docs/AUTO-EMAIL-SETUP.md
-  slack_webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+  auto_send_emails: false
+  slack_webhook_url: ""
   smtp:
-    enabled: false           # set true with Gmail App Password in .env
+    enabled: false
     host: "smtp.gmail.com"
     port: 587
     use_tls: true
     username: "your.email@gmail.com"
-    password: ""             # use RECLAIMKIT_SMTP_PASSWORD in .env — never commit
+    password: ""
     from_email: "your.email@gmail.com"
   image_search:
     provider: "none"
@@ -100,6 +82,5 @@ automation:
     reference_image: ""
 
 campaign:
-  # Fallback if automation.meta_escalation_days is omitted (default 7)
   meta_reminder_days: 7
-  ico_trigger_after_meta_round: 4  # documented workflow — file ICO after Meta round 4+
+  regulator_trigger_after_meta_round: 4

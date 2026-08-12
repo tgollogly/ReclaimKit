@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/tgollogly/ReclaimKit.git}"
-INSTALL_DIR="${INSTALL_DIR:-$HOME/stop-assholes}"
+INSTALL_DIR="${INSTALL_DIR:-$HOME/reclaimkit}"
 
 echo "============================================"
 echo " ReclaimKit WSL + Docker setup and test"
@@ -55,7 +55,7 @@ docker compose build
 
 # --- Run checks inside container ---
 run_app() {
-  docker compose run --rm --no-TTY stop-assholes python3 main.py "$@"
+  docker compose run --rm --no-TTY reclaimkit python3 main.py "$@"
 }
 
 echo ""
@@ -88,11 +88,11 @@ echo "NEXT STEPS:"
 echo "  1. Edit config:  nano $INSTALL_DIR/config.yaml"
 echo "  2. Screenshots:  $INSTALL_DIR/evidence/screenshots/"
 echo "  3. Email Meta:   use letter in output/campaign-package-.../round-01-meta/"
-echo "  4. Record send:  cd $INSTALL_DIR/deploy && docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1"
+echo "  4. Record send:  cd $INSTALL_DIR/deploy && docker compose run --rm reclaimkit python3 main.py campaign sent --track meta --round 1"
 echo ""
 echo "USEFUL COMMANDS (from $INSTALL_DIR/deploy):"
 echo "  docker compose logs -f"
-echo "  docker compose run --rm stop-assholes python3 main.py campaign status"
-echo "  docker compose run --rm stop-assholes python3 main.py daemon once --dry-run"
+echo "  docker compose run --rm reclaimkit python3 main.py campaign status"
+echo "  docker compose run --rm reclaimkit python3 main.py daemon once --dry-run"
 echo "  docker compose down"
 echo ""

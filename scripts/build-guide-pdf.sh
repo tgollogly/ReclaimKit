@@ -17,7 +17,7 @@ pandoc "$MD" \
   --pdf-engine=wkhtmltopdf \
   --css="$CSS" \
   --metadata title="ReclaimKit - Complete User Guide" \
-  --metadata author="Thomas Gollogly" \
+  --metadata author="ReclaimKit contributors" \
   -V margin-top=18mm \
   -V margin-bottom=18mm \
   -V margin-left=16mm \

@@ -2,13 +2,13 @@
 # Removes cloned repo + packages installed for this project, then verifies.
 #
 # Usage (from anywhere):
-#   powershell -ExecutionPolicy Bypass -File C:\Users\User\stop-assholes\scripts\undo-windows.ps1
+#   powershell -ExecutionPolicy Bypass -File C:\Users\User\reclaimkit\scripts\undo-windows.ps1
 #
 # Or after repo is deleted, download this file once and run with -RepoPath:
-#   powershell -ExecutionPolicy Bypass -File undo-windows.ps1 -RepoPath C:\Users\User\stop-assholes
+#   powershell -ExecutionPolicy Bypass -File undo-windows.ps1 -RepoPath C:\Users\User\reclaimkit
 
 param(
-    [string]$RepoPath = "$env:USERPROFILE\stop-assholes"
+    [string]$RepoPath = "$env:USERPROFILE\reclaimkit"
 )
 
 $ErrorActionPreference = "Stop"

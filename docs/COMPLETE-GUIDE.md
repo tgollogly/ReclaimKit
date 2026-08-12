@@ -4,12 +4,14 @@
 
 | Field | Details |
 |-------|---------|
-| **For** | Thomas Gollogly, Northern Ireland |
-| **Toolkit** | [ReclaimKit](https://github.com/tgollogly/stop-assholes) |
+| **For** | Your Name, Your Region |
+| **Toolkit** | [ReclaimKit](https://github.com/tgollogly/reclaimkit) |
 | **Version** | August 2026 |
-| **Legal basis** | UK GDPR Article 17, Defamation Act (NI) 2022, ICO complaints |
+| **Legal basis** | Configurable — set `jurisdiction` in config.yaml for your country's privacy law |
 
-> **Disclaimer:** ReclaimKit generates templates and tracks your campaign. It is **not legal advice** and is not affiliated with Meta, Google, or any paid removal service. Platform decisions are theirs; this guide helps you use the same official channels reputation firms use.
+> **Note:** For the latest test/deploy steps, see [README.md](../README.md). This guide provides extended detail.
+
+> **Disclaimer:** ReclaimKit generates templates and tracks your campaign. It is **not legal advice** and is not affiliated with Meta, Google, or any paid removal service. Platform decisions are theirs; this guide helps you use official channels reputation firms use.
 
 ---
 
@@ -80,10 +82,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Your name** | Thomas Gollogly |
-| **Location** | Northern Ireland, United Kingdom |
+| **Your name** | Your Name |
+| **Location** | Your Region, Your Country |
 | **Harmful content** | Facebook group post with your photo + false allegations in comments |
-| **Group** | AreWeDatingTheSameGuy? Northern Ireland |
+| **Group** | AreWeDatingTheSameGuy? Your Region |
 | **Post date** | ~5 June 2025 |
 | **Post URL** | https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/ |
 | **Already reported in-app?** | Yes (`reported_to_meta: true` in config) |
@@ -111,7 +113,7 @@ These handles are recorded for your evidence pack. ReclaimKit **cannot** identif
 |------|----------|
 | **Your real email address** | Sending GDPR requests; Meta replies here |
 | **Postal address** | UK GDPR identity (name + address in letters) |
-| **Full legal name** | Thomas Gollogly |
+| **Full legal name** | Your Name |
 | **Screenshots** | Post, comments, your photo — saved locally |
 | **Post URL** | Already in `config.example.yaml` |
 | **A computer** | Windows 11, Mac, or Linux |
@@ -181,8 +183,8 @@ You are **currently logged into Facebook**. That is useful now. You plan to **cl
 ### Option A — Local (quickest to start)
 
 ```bash
-git clone https://github.com/tgollogly/stop-assholes.git
-cd stop-assholes
+git clone https://github.com/tgollogly/reclaimkit.git
+cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 ```
@@ -213,14 +215,14 @@ If you created `config.yaml` before the latest update, copy new fields from
 
 ```yaml
 subject:
-  full_name: "Thomas Gollogly"
+  full_name: "Your Name"
   email: "your.real.email@example.com"      # CHANGE THIS
   phone: "+44 XXXX XXXXXX"                    # CHANGE THIS
   address_line1: "Your street address"        # CHANGE THIS
   city: "Newry"                               # adjust if needed
   county: "County Down"
   postcode: "BTXX XXX"                        # CHANGE THIS
-  country: "United Kingdom"
+  country: "Your Country"
 ```
 
 ### Case block — already pre-filled for your post
@@ -228,7 +230,7 @@ subject:
 ```yaml
 case:
   facebook:
-    group_name: "AreWeDatingTheSameGuy? Northern Ireland"
+    group_name: "AreWeDatingTheSameGuy? Your Region"
     post_date: "2025-06-05"
     post_caption: "Any red flags Thomas gollogly"
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
@@ -351,7 +353,7 @@ This is the **most important step**. It starts the UK GDPR one-month clock.
 2. Open your email client (Gmail, Outlook, etc.)
 3. **To:** `privacy@facebook.com`
 4. **CC (optional):** `dpo@facebook.com`
-5. **Subject:** `TG-ER-THOMAS-GOLLO-META-R1 — UK GDPR Article 17 Erasure Request — Thomas Gollogly`
+5. **Subject:** `TG-ER-THOMAS-GOLLO-META-R1 — UK GDPR Article 17 Erasure Request — Your Name`
 6. **Body:** Paste the entire letter
 7. **Attachments:** All screenshots from `evidence/screenshots/`
 8. Send from the **same email address** listed in `config.yaml`
@@ -556,7 +558,7 @@ Logs: `output/cron.log` and `output/automation-log.jsonl`
 ### Cron (no Docker)
 
 ```bash
-0 8 * * * cd /path/to/stop-assholes && python3 main.py daemon once >> output/cron.log 2>&1
+0 8 * * * cd /path/to/reclaimkit && python3 main.py daemon once >> output/cron.log 2>&1
 ```
 
 ### Test automation without sending
@@ -628,8 +630,8 @@ Open Ubuntu (WSL terminal):
 
 ```bash
 sudo apt update && sudo apt install -y python3 python3-pip git
-git clone https://github.com/tgollogly/stop-assholes.git
-cd stop-assholes
+git clone https://github.com/tgollogly/reclaimkit.git
+cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 # Edit config.yaml with: nano config.yaml
@@ -650,7 +652,7 @@ docker compose logs -f
 
 ### Accessing files from Windows
 
-WSL files live at `\\wsl$\Ubuntu\home\<username>\stop-assholes\` in File Explorer. You can copy screenshots there directly.
+WSL files live at `\\wsl$\Ubuntu\home\<username>\reclaimkit\` in File Explorer. You can copy screenshots there directly.
 
 ### Testing on Windows (no VPS)
 
@@ -996,6 +998,6 @@ Data **auto-saves** to `output/` on the host — see section 23.
 
 ---
 
-**ReclaimKit** | MIT License | Copyright 2026 Thomas Gollogly
+**ReclaimKit** | MIT License | Copyright 2026 Your Name
 
-Built in Northern Ireland. Not legal advice. Not affiliated with Meta or Google.
+Built in Your Region. Not legal advice. Not affiliated with Meta or Google.

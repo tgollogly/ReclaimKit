@@ -13,17 +13,62 @@ def today_long() -> str:
 
 def case_ref(config: dict[str, Any], suffix: str = "") -> str:
     name = config["subject"]["full_name"].replace(" ", "-").upper()
-    base = f"TG-ER-{name[:12]}"
+    base = f"RK-ER-{name[:12]}"
     return f"{base}-{suffix}" if suffix else base
+
+
+def jurisdiction_block(config: dict[str, Any]) -> dict[str, Any]:
+    """Privacy-law settings — configure in config.yaml for your country."""
+    defaults = {
+        "privacy_law": "applicable data protection law",
+        "erasure_article": "Article 17",
+        "regulator_name": "the relevant data protection authority",
+        "regulator_url": "[YOUR REGULATOR COMPLAINT URL]",
+        "response_days": 30,
+        "google_delisting_region": config.get("subject", {}).get("country", "your country"),
+    }
+    custom = config.get("jurisdiction") or {}
+    return {**defaults, **custom}
+
+
+def privacy_law_label(config: dict[str, Any]) -> str:
+    j = jurisdiction_block(config)
+    return j["privacy_law"]
+
+
+def erasure_request_title(config: dict[str, Any]) -> str:
+    j = jurisdiction_block(config)
+    return f"{j['erasure_article']} — Right to Erasure — {privacy_law_label(config)}"
+
+
+def residency_line(config: dict[str, Any]) -> str:
+    subject = config["subject"]
+    country = subject.get("country", "my country of residence")
+    region = subject.get("region", "").strip()
+    if region:
+        return f"a data subject resident in {region}, {country}"
+    return f"a data subject resident in {country}"
+
+
+def regulator_name(config: dict[str, Any]) -> str:
+    return jurisdiction_block(config)["regulator_name"]
+
+
+def regulator_url(config: dict[str, Any]) -> str:
+    return jurisdiction_block(config)["regulator_url"]
+
+
+def google_jurisdiction_label(config: dict[str, Any]) -> str:
+    return jurisdiction_block(config)["google_delisting_region"]
 
 
 def format_address(subject: dict[str, Any]) -> str:
     parts = [
         subject.get("address_line1", ""),
         subject.get("city", ""),
-        subject.get("county", ""),
+        subject.get("region", ""),
         subject.get("postcode", ""),
-        subject.get("country", "United Kingdom"),
+        subject.get("country", ""),
     ]
     return "\n".join(p for p in parts if p)
 
@@ -171,13 +216,14 @@ def publication_summary_for_google(config: dict[str, Any]) -> str:
     )
 
 
-def false_allegations_summary() -> str:
+def false_allegations_summary(config: dict[str, Any]) -> str:
+    custom = config.get("case", {}).get("summary", "").strip()
+    if custom:
+        return custom
     return (
-        "The thread contains specific false imputations of serious criminal and sexual "
-        "misconduct, including claims that I drug drinks and engage in inappropriate "
-        "conduct toward family members. I deny each allegation absolutely. No factual "
-        "basis for these statements has ever existed. No court, police force, or "
-        "regulator has ever found any basis for these claims."
+        "The thread contains false and damaging statements about me. I deny each "
+        "allegation. No court, regulator, or official body has found any basis for "
+        "these claims."
     )
 
 
@@ -190,12 +236,12 @@ def harm_and_distress_block(config: dict[str, Any]) -> str:
 
     return (
         "This content has caused me serious and ongoing distress, reputational harm, "
-        "and anxiety. I am a private individual in Northern Ireland, not a public figure. "
-        "The post publishes my likeness and full name alongside solicited abusive commentary "
-        f'in the group "{group}". This is targeted reputational harm — functionally bullying '
-        "and harassment — regardless of whether Meta's Community Standards team classified "
-        "an in-app report differently. Under UK GDPR I am entitled to erasure of my personal "
-        "data irrespective of Community Standards outcomes."
+        "and anxiety. I am a private individual, not a public figure. The post "
+        "publishes my likeness and name alongside solicited harmful commentary "
+        f'in the group "{group}". This is targeted reputational harm — functionally '
+        "bullying and harassment — regardless of whether platform moderation classified "
+        "an in-app report differently. Under applicable privacy law I am entitled to "
+        "erasure of my personal data irrespective of Community Standards outcomes."
     )
 
 
@@ -205,7 +251,7 @@ def meta_reports_block(config: dict[str, Any]) -> str:
     if isinstance(reports, list) and reports:
         lines = [
             "I have already used Meta's in-app reporting tools. Those decisions do NOT "
-            "discharge Meta's UK GDPR obligations and are recorded below for completeness:",
+            "discharge Meta's data protection obligations and are recorded below for completeness:",
             "",
         ]
         for idx, report in enumerate(reports, 1):
@@ -221,8 +267,8 @@ def meta_reports_block(config: dict[str, Any]) -> str:
         lines.append("")
         lines.append(
             "A Community Standards rejection (e.g. \"does not violate our policies\") is "
-            "a moderation outcome — not a lawful Article 17(3) exemption. This formal request "
-            "must be processed by Meta's data protection function under UK GDPR."
+            "a moderation outcome — not a lawful erasure exemption. This formal request "
+            "must be processed by Meta's data protection function under applicable privacy law."
         )
         return "\n".join(lines)
 
@@ -231,9 +277,9 @@ def meta_reports_block(config: dict[str, Any]) -> str:
             "I reported this content through Meta's in-app reporting tools. Meta responded "
             "that the content \"does not go against Community Standards\" and declined removal "
             "(support message, August 2026 — screenshot attached). That moderation outcome "
-            "does NOT satisfy Article 17 UK GDPR and does NOT constitute a valid refusal under "
-            "Article 12(4). I also reported the group for hate speech; group-level moderation "
-            "is separate from my personal erasure rights."
+            "does NOT satisfy applicable erasure rights and does NOT constitute a valid refusal under "
+            "statutory response requirements. I also reported the group where applicable; "
+            "group-level moderation is separate from my personal erasure rights."
         )
 
     return (

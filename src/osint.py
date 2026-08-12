@@ -65,37 +65,28 @@ def analyse_osint(config: dict[str, Any]) -> dict[str, Any]:
         "facebook_group": fb["group_name"],
         "important_limitation": (
             "This report documents handles and patterns only. Attempting to identify "
-            "anonymous posters without legal authority may itself breach UK privacy law. "
-            "Your solicitor or PSNI can request account data from Meta via court order "
-            "or mutual legal assistance."
+            "anonymous posters without legal authority may breach privacy law in your jurisdiction. "
+            "Consult a local solicitor or regulator about lawful disclosure requests to Meta."
         ),
         "commenter_profiles": profiles,
         "location_mentions_in_thread": location_mentions,
         "name_mentions_in_thread": name_mentions,
         "legal_disclosure_pathways": [
             {
-                "route": "Civil litigation (NI High Court)",
+                "route": "Civil litigation",
                 "description": (
-                    "Solicitor can issue a pre-action letter to Meta and apply for "
-                    "Norwich Pharmacal or disclosure order to identify posters."
+                    "Consult a local solicitor about pre-action letters and disclosure orders "
+                    "to identify anonymous posters where your jurisdiction allows."
                 ),
-                "reference": "Defamation Act (Northern Ireland) 2022",
+                "reference": "Applicable local defamation or privacy law",
             },
             {
-                "route": "Criminal complaint (PSNI)",
+                "route": "Regulator complaint against platform",
                 "description": (
-                    "False allegations of drugging and sexual offences may fall under "
-                    "malicious communications or harassment. PSNI can investigate and "
-                    "request data from Meta with appropriate authority."
+                    "If the platform fails to erase personal data within the statutory period "
+                    "under your jurisdiction's privacy law."
                 ),
-                "reference": "Protection from Harassment (NI) Order 1997; Communications Act 2003",
-            },
-            {
-                "route": "ICO complaint against Meta",
-                "description": (
-                    "If Meta fails to erase personal data within one month of GDPR request."
-                ),
-                "reference": "UK GDPR Article 17; https://ico.org.uk/make-a-complaint/",
+                "reference": "Configure jurisdiction.regulator_url in config.yaml",
             },
         ],
         "public_osint_actions_taken": [
@@ -109,24 +100,16 @@ def analyse_osint(config: dict[str, Any]) -> dict[str, Any]:
 
 
 def _recommended_steps(config: dict[str, Any]) -> list[str]:
-    prefs = config.get("preferences", {})
-    steps = [
+    j = config.get("jurisdiction", {})
+    regulator = j.get("regulator_name", "your data protection authority")
+    return [
         "Preserve screenshots (run: python3 main.py evidence)",
-        "Submit Meta GDPR letter and escalation (run: python3 main.py letters)",
+        "Submit platform privacy erasure letter (run: python3 main.py campaign init)",
         "Do NOT engage with commenters publicly",
+        f"If the platform refuses after {j.get('response_days', 30)} days, complain to {regulator}",
+        "After removal confirmed, consider closing the account (run: python3 main.py close)",
+        "Monitor search engines monthly (python3 main.py monitor)",
     ]
-    if prefs.get("no_police", True):
-        steps.extend([
-            "If Meta refuses after 30 days, complain to ICO (no police needed)",
-            "After removal confirmed, close Facebook (run: python3 main.py close)",
-            "Monitor Google monthly after account closure (python3 main.py monitor)",
-        ])
-    else:
-        steps.extend([
-            "If criminal allegations persist, consider PSNI report on 101 with evidence pack",
-            "Consult NI defamation solicitor for Norwich Pharmacal order if needed",
-        ])
-    return steps
 
 
 def classify_username(name: str) -> str:
@@ -146,17 +129,13 @@ def assess_deanonymisation(name: str) -> str:
 
 
 def extract_location_mentions(commenters: list[dict[str, Any]]) -> list[str]:
-    ni_places = [
-        "Omagh", "Enniskillen", "Belfast", "Derry", "Newry", "Armagh",
-        "Lisburn", "Bangor", "Coleraine", "Antrim", "Down", "Tyrone",
-        "Fermanagh", "Londonderry", "Northern Ireland", "NI",
-    ]
+    """Extract capitalised place-like tokens from comments (heuristic)."""
     found: set[str] = set()
     for commenter in commenters:
         text = commenter.get("comment", "")
-        for place in ni_places:
-            if place.lower() in text.lower():
-                found.add(place)
+        for match in re.findall(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b", text):
+            if match.lower() not in {"i", "the", "anyone", "please"}:
+                found.add(match)
     return sorted(found)
 
 
@@ -168,8 +147,6 @@ def extract_name_mentions(commenters: list[dict[str, Any]], full_name: str) -> l
         for part in parts:
             if len(part) > 2 and part in text:
                 found.add(part)
-        if "marty ban" in text:
-            found.add("Marty Ban (possible misidentification or alias in thread)")
     return sorted(found)
 
 

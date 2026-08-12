@@ -13,7 +13,7 @@ COPY . .
 # config.yaml and evidence/ should be mounted at runtime
 RUN mkdir -p evidence/screenshots output/campaign
 
-COPY deploy/cron-entry /etc/cron.d/stop-assholes
-RUN chmod 0644 /etc/cron.d/stop-assholes && crontab /etc/cron.d/stop-assholes
+COPY deploy/cron-entry /etc/cron.d/reclaimkit
+RUN chmod 0644 /etc/cron.d/reclaimkit && crontab /etc/cron.d/reclaimkit
 
 CMD ["cron", "-f"]

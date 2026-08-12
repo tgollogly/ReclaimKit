@@ -53,7 +53,7 @@ echo ""
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
   if [[ -d "$ROOT/deploy" ]]; then
     cd "$ROOT/deploy"
-    if docker compose ps --status running 2>/dev/null | grep -q stop-assholes; then
+    if docker compose ps --status running 2>/dev/null | grep -q reclaimkit; then
       echo "[OK]   Docker container running (daily cron active)"
     else
       echo "[WARN] Docker container not running — start with:"
