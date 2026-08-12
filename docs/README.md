@@ -1,5 +1,7 @@
 # ReclaimKit documentation
 
+Copyright © 2026 [tgollogly](https://github.com/tgollogly) — [MIT License](../LICENSE). Not legal advice.
+
 | Document | Markdown | PDF |
 |----------|----------|-----|
 | **Quick Start** | [QUICK-START.md](QUICK-START.md) | [QUICK-START.pdf](QUICK-START.pdf) |

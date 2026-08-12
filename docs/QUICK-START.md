@@ -60,4 +60,4 @@ See [deploy/VPS-GUIDE.md](../deploy/VPS-GUIDE.md) (~$5/mo for 24/7 automation).
 ./scripts/audit.sh    # full repo check
 ```
 
-Not legal advice. Configure `jurisdiction` in config.yaml for your country's privacy law.
+Not legal advice. Copyright © 2026 [tgollogly](https://github.com/tgollogly) — [MIT License](../LICENSE). Configure `jurisdiction` in config.yaml for your country's privacy law.
