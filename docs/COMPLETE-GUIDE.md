@@ -996,6 +996,6 @@ Data **auto-saves** to `output/` on the host — see section 23.
 
 ---
 
-**ReclaimKit** | MIT License | Copyright 2026 ReclaimKit contributors
+**ReclaimKit** | [MIT License](../LICENSE) | Copyright © 2026 [tgollogly](https://github.com/tgollogly)
 
-Not legal advice. Not affiliated with Meta or Google.
+**Legal disclaimer:** Templates and guides are for informational use only — not legal advice. Not affiliated with Meta, Google, or any reputation-management service. You are solely responsible for submissions and outcomes. See [LICENSE](../LICENSE) for full terms.

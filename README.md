@@ -159,6 +159,12 @@ Verify: `./scripts/check-autosave.sh`
 
 ## License
 
-MIT License — Copyright © 2026 ReclaimKit contributors. See [LICENSE](LICENSE).
+MIT License — Copyright © 2026 [tgollogly](https://github.com/tgollogly). See [LICENSE](LICENSE).
 
-Not legal advice. Not affiliated with Meta, Google, or any reputation-management service.
+## Legal disclaimer
+
+ReclaimKit generates letter templates and tracks your campaign workflow. It is **not legal advice** and does not create an attorney-client relationship. Privacy and platform-removal laws vary by country — consult a qualified professional in your jurisdiction before sending correspondence.
+
+ReclaimKit is **not affiliated with** Meta, Google, Removify, Erase.com, or any reputation-management service. Platform decisions are theirs alone. You are solely responsible for how you use generated letters and any outcomes.
+
+The Software is provided **"as is"** under the MIT License, without warranty of any kind.
