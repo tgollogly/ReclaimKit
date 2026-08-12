@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ReclaimKit — UK/NI reputation reclaim CLI."""
+"""ReclaimKit — reputation reclaim CLI."""
 
 from __future__ import annotations
 
@@ -239,7 +239,7 @@ def cmd_all(args: argparse.Namespace) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="ReclaimKit — UK/NI multi-round removal campaign and monitoring.",
+        description="ReclaimKit — multi-round removal campaign and monitoring.",
     )
     parser.add_argument("--config", default="config.yaml", help="Path to config file")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -266,20 +266,20 @@ def main() -> int:
     campaign_sub.add_parser("status", help="Show campaign progress")
 
     p_next = campaign_sub.add_parser("next", help="Generate next escalation package")
-    p_next.add_argument("--track", choices=["meta", "google", "ico"], default=None)
+    p_next.add_argument("--track", choices=["meta", "google", "regulator", "ico"], default=None)
     p_next.add_argument("--round", type=int, default=None)
 
     p_sent = campaign_sub.add_parser("sent", help="Record that you sent a letter")
-    p_sent.add_argument("--track", required=True, choices=["meta", "google", "ico"])
+    p_sent.add_argument("--track", required=True, choices=["meta", "google", "regulator", "ico"])
     p_sent.add_argument("--round", type=int, required=True)
     p_sent.add_argument("--reference", default="", help="ICO or Meta case reference")
 
     p_ref = campaign_sub.add_parser("refused", help="Record refusal and generate next round")
-    p_ref.add_argument("--track", required=True, choices=["meta", "google", "ico"])
+    p_ref.add_argument("--track", required=True, choices=["meta", "google", "regulator", "ico"])
     p_ref.add_argument("--reason", required=True, help="What they said / why content remains")
 
     p_nr = campaign_sub.add_parser("no-response", help="Record silence and generate next round")
-    p_nr.add_argument("--track", required=True, choices=["meta", "google", "ico"])
+    p_nr.add_argument("--track", required=True, choices=["meta", "google", "regulator", "ico"])
     p_nr.add_argument("--days", type=int, default=7)
 
     p_ok = campaign_sub.add_parser("success", help="Mark content as removed")

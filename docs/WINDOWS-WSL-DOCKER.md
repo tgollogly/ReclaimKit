@@ -18,7 +18,7 @@ irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-wi
 Or:
 
 ```powershell
-wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/reclaimkit && git clone https://github.com/tgollogly/reclaimkit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
 ```
 
 Pass = **`SETUP COMPLETE`**.
@@ -67,9 +67,9 @@ You should see a Linux prompt like `username@PC:~$`
 
 ```bash
 sudo apt update && sudo apt install -y git
-rm -rf ~/stop-assholes
-git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes
-cd ~/stop-assholes
+rm -rf ~/reclaimkit
+git clone https://github.com/tgollogly/reclaimkit.git ~/reclaimkit
+cd ~/reclaimkit
 chmod +x scripts/wsl-setup-and-test.sh
 ./scripts/wsl-setup-and-test.sh
 ```
@@ -93,7 +93,7 @@ The script will:
 Still in WSL:
 
 ```bash
-nano ~/stop-assholes/config.yaml
+nano ~/reclaimkit/config.yaml
 ```
 
 **Save in nano:** `Ctrl+X` → `Y` → `Enter`
@@ -107,20 +107,20 @@ Fill in:
 Add screenshots (from Windows you can copy to):
 
 ```
-\\wsl$\Ubuntu\home\YOUR_USERNAME\stop-assholes\evidence\screenshots\
+\\wsl$\Ubuntu\home\YOUR_USERNAME\reclaimkit\evidence\screenshots\
 ```
 
 Or in WSL:
 
 ```bash
-cp /mnt/c/Users/User/Pictures/your-screenshot.png ~/stop-assholes/evidence/screenshots/
+cp /mnt/c/Users/User/Pictures/your-screenshot.png ~/reclaimkit/evidence/screenshots/
 ```
 
 Regenerate letters after config change:
 
 ```bash
-cd ~/stop-assholes/deploy
-docker compose run --rm stop-assholes python3 main.py campaign init
+cd ~/reclaimkit/deploy
+docker compose run --rm reclaimkit python3 main.py campaign init
 ```
 
 ---
@@ -129,15 +129,15 @@ docker compose run --rm stop-assholes python3 main.py campaign init
 
 1. Open letter (from Windows Explorer or WSL):
 
-   `~/stop-assholes/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`
+   `~/reclaimkit/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`
 
 2. Email **privacy@facebook.com** with screenshots attached
 
 3. Record in ReclaimKit:
 
 ```bash
-cd ~/stop-assholes/deploy
-docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1
+cd ~/reclaimkit/deploy
+docker compose run --rm reclaimkit python3 main.py campaign sent --track meta --round 1
 ```
 
 ---
@@ -149,7 +149,7 @@ See **[AUTO-EMAIL-SETUP.md](AUTO-EMAIL-SETUP.md)**
 Quick version in WSL:
 
 ```bash
-cd ~/stop-assholes
+cd ~/reclaimkit
 cp .env.example .env
 nano .env   # RECLAIMKIT_SMTP_PASSWORD=your-gmail-app-password
 nano config.yaml   # auto_send_emails: true, smtp.enabled: true
@@ -165,7 +165,7 @@ env_file:
 Restart:
 
 ```bash
-cd ~/stop-assholes/deploy
+cd ~/reclaimkit/deploy
 docker compose down && docker compose up -d --build
 ```
 
@@ -173,15 +173,15 @@ docker compose down && docker compose up -d --build
 
 ## Daily commands (WSL)
 
-All from `~/stop-assholes/deploy`:
+All from `~/reclaimkit/deploy`:
 
 | Task | Command |
 |------|---------|
-| Check status | `docker compose run --rm stop-assholes python3 main.py campaign status` |
+| Check status | `docker compose run --rm reclaimkit python3 main.py campaign status` |
 | View logs | `docker compose logs -f` |
 | Cron log file | `cat ../output/cron.log` |
-| Test automation (safe) | `docker compose run --rm stop-assholes python3 main.py daemon once --dry-run` |
-| Run automation now | `docker compose run --rm stop-assholes python3 main.py daemon once` |
+| Test automation (safe) | `docker compose run --rm reclaimkit python3 main.py daemon once --dry-run` |
+| Run automation now | `docker compose run --rm reclaimkit python3 main.py daemon once` |
 | Stop container | `docker compose down` |
 | Start again | `docker compose up -d` |
 
@@ -192,7 +192,7 @@ All from `~/stop-assholes/deploy`:
 | | **doctor** | **Docker** |
 |---|-----------|------------|
 | What | Health check | Runs daily automation |
-| Command | `docker compose run --rm stop-assholes python3 main.py doctor` | `docker compose up -d` |
+| Command | `docker compose run --rm reclaimkit python3 main.py doctor` | `docker compose up -d` |
 | Auto-save | No | Yes — `output/` folder on your disk |
 
 ---
@@ -206,17 +206,17 @@ All from `~/stop-assholes/deploy`:
 | `Cannot connect to Docker` | Docker Desktop → WSL Integration → Ubuntu ON |
 | Doctor warns no screenshots | Add PNG/JPG to `evidence/screenshots/` |
 | Cron not running yet | Runs daily 08:00 UTC — or run `daemon once` manually |
-| Slow on `/mnt/c/` | Clone in `~/stop-assholes` (Linux home), not `C:\` |
+| Slow on `/mnt/c/` | Clone in `~/reclaimkit` (Linux home), not `C:\` |
 
 ---
 
 ## Undo everything (WSL)
 
 ```bash
-cd ~/stop-assholes/deploy
+cd ~/reclaimkit/deploy
 docker compose down
 cd ~
-rm -rf ~/stop-assholes
+rm -rf ~/reclaimkit
 ```
 
 ---
@@ -225,6 +225,6 @@ rm -rf ~/stop-assholes
 
 After clone, open in Windows:
 
-- `\\wsl$\Ubuntu\home\YOUR_USERNAME\stop-assholes\docs\QUICK-START.pdf`
+- `\\wsl$\Ubuntu\home\YOUR_USERNAME\reclaimkit\docs\QUICK-START.pdf`
 - `docs\COMPLETE-GUIDE.pdf`
 - `docs\AUTO-EMAIL-SETUP.pdf`

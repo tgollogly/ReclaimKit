@@ -22,7 +22,7 @@ STEP 1 — SUBMIT REMOVAL REQUESTS (before closing account)
   □ Email privacy@facebook.com with 01_meta_gdpr_article17.txt
   □ Submit escalation: facebook.com/help/contact/571927962827151
   □ Keep screenshots in evidence/screenshots/ (already have these)
-  □ Save Meta's reply emails — you need proof if you escalate to ICO
+  □ Save Meta's reply emails — you need proof if you escalate to your data protection authority
 
 STEP 2 — GOOGLE (parallel, works without Facebook account)
 ----------------------------------------------------------
@@ -35,8 +35,8 @@ STEP 3 — WAIT FOR META (up to 1 month for GDPR)
   □ Check the group post is gone (ask someone still in the group, or check
     before you close — you won't see it after deactivation)
   □ If no response in 2 weeks, send the escalation letter again
-  □ If refused after 30 days: ICO complaint (no police needed)
-        https://ico.org.uk/make-a-complaint/
+  □ If refused after 30 days: your data protection authority complaint (no police needed)
+        https://your-regulator-url/make-a-complaint/
 
 STEP 4 — CLOSE FACEBOOK (after removal confirmed OR after GDPR deadline)
 ------------------------------------------------------------------------
@@ -56,7 +56,7 @@ STEP 4 — CLOSE FACEBOOK (after removal confirmed OR after GDPR deadline)
     □ Save any evidence / report reference numbers locally first
 
   Note: Deleting your account does NOT remove the group post. The post must
-  be removed by Meta while your request is active, or via GDPR/ICO pressure.
+  be removed by Meta while your request is active, or via GDPR/your data protection authority pressure.
 
 STEP 5 — ONGOING (after Facebook is closed)
 -------------------------------------------
@@ -66,12 +66,12 @@ STEP 5 — ONGOING (after Facebook is closed)
 
 WHAT YOU ARE NOT DOING (by choice — that's fine)
 -------------------------------------------------
-  ✗ PSNI / police report
-  ✗ Court / solicitor (unless Meta and ICO both fail)
+  ✗ local law enforcement / police report
+  ✗ Court / solicitor (unless Meta and your data protection authority both fail)
   ✗ Confronting commenters
 
 Support without police:
-  ICO (data protection): ico.org.uk | 0303 123 1113
+  your data protection authority (data protection): your-regulator-url | 0303 123 1113
   Citizens Advice NI: 0800 915 4605
 """
 
@@ -91,16 +91,16 @@ You do not need police involvement for this path.
 PRIORITY ORDER
 --------------
 1. python3 main.py letters     → generate Meta GDPR + Google drafts
-2. Email privacy@facebook.com  → starts 1-month UK GDPR clock
+2. Email privacy@facebook.com  → starts 1-month applicable privacy law clock
 3. Escalation form if ignored  → facebook.com/help/contact/571927962827151
 4. python3 main.py monitor      → check Google, submit delisting if needed
 5. Confirm removal             → then python3 main.py close for account steps
-6. ICO if Meta refuses (30 days) → ico.org.uk/make-a-complaint/  (no police)
+6. your data protection authority if Meta refuses (30 days) → your-regulator-url/make-a-complaint/  (no police)
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ META REMOVAL (main lever)                                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ • UK GDPR Article 17 — your photo + name used without consent                │
+│ • applicable privacy law Article 17 — your photo + name used without consent                │
 │ • False allegations in comments — unlawful processing causing harm           │
 │ • Meta must respond within 1 calendar month                                  │
 │ • Escalation if in-app report was ignored                                    │
@@ -115,7 +115,7 @@ PRIORITY ORDER
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ IF META REFUSES — ICO, NOT POLICE                                            │
+│ IF META REFUSES — your data protection authority, NOT POLICE                                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ • Complaint to Information Commissioner's Office                             │
 │ • Free, no court, no police                                                  │
@@ -144,6 +144,6 @@ def _full_guide() -> str:
 
 OPTIONAL ROUTES (not in your removal-only plan)
 -----------------------------------------------
-• PSNI 101 — only if you later want criminal investigation
-• NI solicitor — only if Meta + ICO both fail and you want court action
+• local law enforcement 101 — only if you later want criminal investigation
+• local solicitor — only if Meta + your data protection authority both fail and you want court action
 """

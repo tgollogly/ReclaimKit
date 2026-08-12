@@ -35,8 +35,8 @@ def monitor_search_results(config: dict[str, Any]) -> dict[str, Any]:
         raise ImportError("Install dependencies: pip install -r requirements.txt")
 
     monitor_cfg = config.get("monitor", {})
-    queries = monitor_cfg.get("search_queries", ['"Thomas Gollogly"'])
-    region = monitor_cfg.get("region", "uk-en")
+    queries = monitor_cfg.get("search_queries", [f'"{config["subject"]["full_name"]}"'])
+    region = monitor_cfg.get("region", "en")
 
     all_results: list[dict[str, Any]] = []
     seen_urls: set[str] = set()

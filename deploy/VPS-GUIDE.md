@@ -44,8 +44,8 @@ For ReclaimKit itself you do **not** need AI — letters are pre-written templat
 
 ```bash
 apt update && apt install -y git docker.io docker-compose-v2
-git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
-cd ~/stop-assholes
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
+cd ~/reclaimkit
 cp config.example.yaml config.yaml
 nano config.yaml                   # real email, meta_reports, post_origin: uncertain
 mkdir -p evidence/screenshots output
@@ -65,14 +65,14 @@ cd deploy && docker compose up -d --build
 
 | Host path (laptop or VPS) | What is saved |
 |---------------------------|---------------|
-| `~/stop-assholes/config.yaml` | Your details |
-| `~/stop-assholes/output/` | Letters, `campaign/state.json`, cron logs |
-| `~/stop-assholes/evidence/` | Screenshots |
+| `~/reclaimkit/config.yaml` | Your details |
+| `~/reclaimkit/output/` | Letters, `campaign/state.json`, cron logs |
+| `~/reclaimkit/evidence/` | Screenshots |
 
 Verify anytime:
 
 ```bash
-cd ~/stop-assholes && ./scripts/check-autosave.sh
+cd ~/reclaimkit && ./scripts/check-autosave.sh
 ```
 
 See `deploy/docker-compose.yml` and `deploy/README.md`.

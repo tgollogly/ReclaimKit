@@ -29,8 +29,8 @@ This is the same limitation Removify has — they also submit forms and emails, 
 ## Quick start (Docker on VPS)
 
 ```bash
-git clone https://github.com/tgollogly/stop-assholes.git
-cd stop-assholes
+git clone https://github.com/tgollogly/reclaimkit.git
+cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 # Edit config.yaml — email, address, meta_reports, Slack webhook
@@ -79,7 +79,7 @@ Unless `auto_send_emails: true`, the daemon generates escalation packages but yo
 # On your VPS
 crontab -e
 # Add:
-0 8 * * * cd /path/to/stop-assholes && /usr/bin/python3 main.py daemon once >> output/cron.log 2>&1
+0 8 * * * cd /path/to/reclaimkit && /usr/bin/python3 main.py daemon once >> output/cron.log 2>&1
 ```
 
 ---

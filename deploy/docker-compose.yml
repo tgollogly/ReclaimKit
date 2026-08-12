@@ -1,5 +1,5 @@
 services:
-  stop-assholes:
+  reclaimkit:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
@@ -10,7 +10,7 @@ services:
       - ../output:/app/output
     restart: unless-stopped
     environment:
-      - TZ=Europe/London
+      - TZ=UTC
     # Optional secrets — create ../.env from .env.example first, then uncomment:
     # env_file:
     #   - ../.env

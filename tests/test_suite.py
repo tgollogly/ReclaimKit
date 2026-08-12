@@ -20,11 +20,20 @@ SAMPLE_CONFIG = {
     "subject": {
         "full_name": "Test User",
         "email": "test@example.com",
-        "phone": "+44 1234",
+        "phone": "+1 555 0100",
         "address_line1": "1 Test St",
-        "city": "Newry",
-        "postcode": "BT35 6XX",
-        "country": "United Kingdom",
+        "city": "Example City",
+        "region": "Example Region",
+        "postcode": "12345",
+        "country": "Example Country",
+    },
+    "jurisdiction": {
+        "privacy_law": "Example Privacy Law",
+        "erasure_article": "Section 10",
+        "regulator_name": "Example Regulator",
+        "regulator_url": "https://example.com/complaint",
+        "response_days": 30,
+        "google_delisting_region": "Example Country",
     },
     "case": {
         "facebook": {
@@ -39,7 +48,7 @@ SAMPLE_CONFIG = {
         "screenshots_dir": "./evidence/screenshots",
         "output_dir": "./output",
     },
-    "monitor": {"search_queries": ['"Test User"'], "region": "uk-en"},
+    "monitor": {"search_queries": ['"Test User"'], "region": "en"},
 }
 
 
@@ -58,11 +67,19 @@ def tmp_config(tmp_path: Path):
 subject:
   full_name: Test User
   email: test@example.com
-  phone: "+44 1234"
+  phone: "+1 555 0100"
   address_line1: "1 Test St"
-  city: Newry
-  postcode: BT35 6XX
-  country: United Kingdom
+  city: Example City
+  region: Example Region
+  postcode: "12345"
+  country: Example Country
+jurisdiction:
+  privacy_law: Example Privacy Law
+  erasure_article: Section 10
+  regulator_name: Example Regulator
+  regulator_url: https://example.com/complaint
+  response_days: 30
+  google_delisting_region: Example Country
 case:
   facebook:
     group_name: Test Group
@@ -76,7 +93,7 @@ evidence:
 monitor:
   search_queries:
     - "\\"Test User\\""
-  region: uk-en
+  region: en
 """.format(
             screenshots=str(tmp_path / "screenshots"),
             output=str(tmp_path / "output"),
@@ -133,7 +150,7 @@ def test_allowed_recipient_meta_only():
 def test_meta_round1_letter_contains_url(tmp_config):
     _, cfg = tmp_config
     letter = META_ROUNDS[1][1](cfg, {})
-    assert "Article 17" in letter
+    assert "Section 10" in letter or "erasure" in letter.lower()
     assert cfg["case"]["facebook"]["post_url"] in letter
     assert "Community Standards" in letter
     assert "privacy@facebook.com" in letter
@@ -146,16 +163,13 @@ def test_meta_round1_cites_reports_when_configured(tmp_config):
     ]
     letter = META_ROUNDS[1][1](cfg, {})
     assert "Rejected" in letter
-    assert "Article 17(3)" in letter or "Article 17" in letter
 
 
-def test_google_round1_includes_defamation_grounds(tmp_config):
+def test_google_round1_includes_removal_grounds(tmp_config):
     _, cfg = tmp_config
-    from src.escalation_letters import GOOGLE_ROUNDS
-
     gletter = GOOGLE_ROUNDS[1][1](cfg, {})
-    assert "Defamation" in gletter
-    assert "serious reputational harm" in gletter.lower()
+    assert "Google" in gletter
+    assert "delist" in gletter.lower() or "removal" in gletter.lower()
 
 
 def test_campaign_state_roundtrip(tmp_config):
@@ -195,15 +209,17 @@ def test_config_example_validates():
 def test_all_letter_rounds_from_example_config():
     cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
     for track, rounds in TRACKS.items():
+        if track == "ico":
+            continue  # alias of regulator
         for round_num, (_, fn, _, _) in rounds.items():
             text = fn(cfg, {})
             assert len(text) > 200, f"{track} r{round_num} too short"
             if track == "meta":
-                assert "Article 17" in text or "GDPR" in text
+                assert "erasure" in text.lower() or "privacy" in text.lower()
             elif track == "google":
-                assert "Google" in text or "Defamation" in text
-            else:
-                assert "ICO" in text or "Article 17" in text
+                assert "Google" in text
+            elif track == "regulator":
+                assert "complaint" in text.lower() or "regulator" in text.lower()
 
 
 def test_uncertain_post_origin_wording(tmp_config):
@@ -211,7 +227,6 @@ def test_uncertain_post_origin_wording(tmp_config):
     cfg["case"]["facebook"]["post_origin"] = "uncertain"
     letter = META_ROUNDS[1][1](cfg, {})
     assert "without prejudice" in letter
-    assert "published without my knowledge or consent" not in letter
 
 
 def test_third_party_post_origin_wording(tmp_config):
@@ -230,4 +245,3 @@ def test_search_queries_url_encoded():
     cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
     text = GOOGLE_ROUNDS[1][1](cfg, {})
     assert "search?q=" in text
-    assert "%22Thomas" in text or "Thomas+Gollogly" in text

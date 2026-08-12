@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from src.escalation_letters import ICO_ROUNDS, META_ROUNDS, TRACKS
+from src.escalation_letters import META_ROUNDS, REGULATOR_ROUNDS, TRACKS
 from src.security import clamp_text
 from src.letter_context import case_ref, today_long
 
@@ -30,7 +30,14 @@ def load_state(path: Path | None = None) -> dict[str, Any]:
             f"No campaign found at {state_path}. Run: python3 main.py campaign init"
         )
     with state_path.open(encoding="utf-8") as handle:
-        return json.load(handle)
+        state = json.load(handle)
+    tracks = state.get("tracks", {})
+    if "regulator" not in tracks and "ico" in tracks:
+        tracks["regulator"] = tracks.pop("ico")
+    if "ico" not in tracks and "regulator" in tracks:
+        tracks["ico"] = tracks["regulator"]
+    state["tracks"] = tracks
+    return state
 
 
 def save_state(state: dict[str, Any], path: Path | None = None) -> Path:
@@ -59,7 +66,8 @@ def init_campaign(config: dict[str, Any], output_dir: Path | None = None) -> dic
         "tracks": {
             "meta": {"round": 0, "max_round": max(META_ROUNDS), "events": []},
             "google": {"round": 0, "max_round": max(TRACKS["google"]), "events": []},
-            "ico": {"round": 0, "max_round": max(TRACKS["ico"]), "events": []},
+            "regulator": {"round": 0, "max_round": max(REGULATOR_ROUNDS), "events": []},
+            "ico": {"round": 0, "max_round": max(REGULATOR_ROUNDS), "events": []},
         },
         "context": {},
         "history": [],
@@ -78,8 +86,10 @@ def _ctx_from_state(state: dict[str, Any]) -> dict[str, Any]:
                 ctx.setdefault("refusal_reason", event.get("reason", ""))
             if event.get("type") == "refused" and track == "google":
                 ctx.setdefault("google_refusal", event.get("reason", ""))
-            if event.get("type") == "sent" and track == "ico":
-                ctx.setdefault("ico_reference", event.get("reference", ""))
+            if event.get("type") == "sent" and track in ("ico", "regulator"):
+                ref = event.get("reference", "")
+                ctx.setdefault("regulator_reference", ref)
+                ctx.setdefault("ico_reference", ref)
     return ctx
 
 
@@ -90,6 +100,8 @@ def generate_round_package(
     round_num: int,
     package_dir: Path,
 ) -> Path:
+    if track == "ico":
+        track = "regulator"
     rounds = TRACKS[track]
     if round_num not in rounds:
         raise ValueError(f"No letter for {track} round {round_num}")
@@ -136,12 +148,12 @@ def _submit_instructions(track: str, round_num: int, send_to: str, ref: str) -> 
             "3. After submitting, run:",
             f"   python3 main.py campaign sent --track google --round {round_num}",
         ])
-    elif track == "ico":
+    elif track in ("ico", "regulator"):
         lines.extend([
-            "1. Submit at https://ico.org.uk/make-a-complaint/",
+            "1. Submit at the regulator URL in the letter header (config: jurisdiction.regulator_url)",
             "2. Attach evidence pack + all Meta correspondence",
             "3. After submitting, run:",
-            f"   python3 main.py campaign sent --track ico --round {round_num} --reference YOUR-ICO-REF",
+            f"   python3 main.py campaign sent --track regulator --round {round_num} --reference YOUR-REF",
         ])
     return "\n".join(lines) + "\n"
 
@@ -161,7 +173,9 @@ def record_sent(
     *,
     reference: str = "",
 ) -> dict[str, Any]:
-    data = state["tracks"][track]
+    if track == "ico":
+        track = "regulator"
+    data = state["tracks"].get(track) or state["tracks"]["regulator"]
     if round_num != data["round"] + 1 and data["round"] != 0:
         # Allow re-recording same round or next sequential round
         if round_num <= data["round"]:
@@ -294,7 +308,7 @@ def generate_next_package(
     else:
         meta_r = state["tracks"]["meta"]["round"]
         google_r = state["tracks"]["google"]["round"]
-        ico_r = state["tracks"]["ico"]["round"]
+        reg_r = state["tracks"].get("regulator", state["tracks"].get("ico", {"round": 0, "max_round": 1}))
 
         if meta_r == 0:
             _gen("meta", 1)
@@ -306,10 +320,10 @@ def generate_next_package(
         elif google_r < state["tracks"]["google"]["max_round"] and meta_r >= 2:
             _gen("google", google_r + 1)
 
-        if ico_r == 0 and meta_r >= 4:
-            _gen("ico", 1)
-        elif ico_r < state["tracks"]["ico"]["max_round"] and meta_r >= 5:
-            _gen("ico", ico_r + 1)
+        if reg_r["round"] == 0 and meta_r >= 4:
+            _gen("regulator", 1)
+        elif reg_r["round"] < reg_r["max_round"] and meta_r >= 5:
+            _gen("regulator", reg_r["round"] + 1)
 
     if not generated:
         raise ValueError(
