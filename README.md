@@ -295,9 +295,16 @@ docker compose run --rm stop-assholes python3 main.py <command>
 | `campaign sent --track meta --round 1` | Record that you emailed Meta |
 | `campaign status` | Show progress |
 | `campaign no-response --track meta` | 7 days silence → next round |
+| `campaign refused --track meta --reason "..."` | Refusal → rebuttal |
+| `campaign success` | Mark content removed |
 | `daemon once --dry-run` | **Safe test** — no emails sent |
 | `daemon once` | Run daily job now (live) |
 | `monitor` | Scan Google for your name |
+| `init` | Create `config.yaml` and evidence folders |
+| `evidence` | Build hashed evidence pack |
+| `letters` | Generate standalone takedown letters |
+| `close` | Facebook closure checklist |
+| `all` | Evidence + campaign + osint + monitor |
 
 ---
 
