@@ -1,116 +1,147 @@
-# Stop Assholes — Multi-Round Removal Campaign (UK/NI)
+<p align="center">
+  <img src="assets/reclaimkit-hero.png" alt="ReclaimKit — UK/NI Reputation Reclaim Toolkit" width="100%" />
+</p>
 
-Automated **escalation campaign** to remove harmful Facebook content and Google search results. Generates professionally worded legal letters across **multiple rounds** — each refusal or silence triggers the next, stronger letter until removal or ICO enforcement.
+<h1 align="center">ReclaimKit</h1>
 
-**No solicitor. No police.**
+<p align="center">
+  <strong>UK/NI Reputation Reclaim Toolkit</strong><br/>
+  Multi-round GDPR campaigns · Daily monitoring · Slack alerts · VPS-ready
+</p>
 
-## How it works
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" />
+  <img src="https://img.shields.io/badge/region-UK%20%2F%20NI-teal?style=flat-square" alt="UK/NI" />
+  <img src="https://img.shields.io/badge/cost-%240%20software-success?style=flat-square" alt="Free software" />
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python 3.10+" />
+</p>
+
+---
+
+> **ReclaimKit** helps you fight harmful Facebook posts and Google search results using the same legal channels reputation firms use — **GDPR erasure, defamation delisting, ICO complaints** — without paying **£400–£2,000 per case**.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🟢 What ReclaimKit does
+
+- **6-round Meta escalation** (GDPR → ICO)
+- **3-round Google delisting** drafts
+- **Daily web + image monitoring**
+- **Slack notifications** on new hits
+- **VPS / Docker** deployment
+- **Optional auto-email** to Meta
+
+</td>
+<td width="50%" valign="top">
+
+### 🔴 What no software can do
+
+- Force-delete Facebook posts instantly
+- Auto-submit Google web forms (no API)
+- Scrape private groups
+- Guarantee removal — platforms decide
+
+</td>
+</tr>
+</table>
+
+---
+
+## 💷 What removal services charge
+
+| Service | Typical cost | Model |
+|---------|-------------|--------|
+| **Removify** | **£400–£2,000** (~$500–$2,500) per item | No win, no fee + deposit |
+| **Erase.com** | **£800–£2,000+** per item | Custom quote |
+| **Guaranteed Removals** | **£600–£1,500** per item | Pay on success |
+| **NI solicitor** | **£500–£5,000+** | Hourly / letter before action |
+| **ReclaimKit** | **£0** software · **~£5/mo** optional VPS | You run the same process |
+
+Paid services submit the **same forms and emails** ReclaimKit generates — their value is persistence and wording. ReclaimKit automates that for you.
+
+Sources: [Removify FAQ](https://removify.com/faq/how-much-does-it-cost-to-remove-a-google-review/), [industry comparison](https://www.truereview.co/post/removify-vs-erase-vs-guaranteed-removals-honest-comparison).
+
+---
+
+## ⚡ Quick start
 
 ```bash
+git clone https://github.com/tgollogly/stop-assholes.git
+cd stop-assholes
 pip install -r requirements.txt
-python3 main.py init          # create config.yaml
-# Edit config.yaml — your real email, address, phone
-# Add screenshots to evidence/screenshots/
-
-python3 main.py campaign init # round 1: Meta GDPR + Google
-# → Send letters from output/campaign-package-*/
-
-python3 main.py campaign sent --track meta --round 1
-
-# 7 days, no removal?
-python3 main.py campaign no-response --track meta
-
-# Meta explicitly refused?
-python3 main.py campaign refused --track meta --reason "They said..."
-
-# Check progress anytime
-python3 main.py campaign status
-
-# Content gone?
-python3 main.py campaign success
-python3 main.py close
+python3 main.py init
 ```
 
-## Escalation rounds (automatic)
+1. Edit **`config.yaml`** — your email, address, Slack webhook  
+2. Add screenshots to **`evidence/screenshots/`**  
+3. Run **`python3 main.py campaign init`**  
+4. Email Meta using **`output/campaign-package-.../round-01-meta/`**  
+5. Track: **`python3 main.py campaign sent --track meta --round 1`**
 
-### Meta track (6 rounds)
+---
 
-| Round | Letter | When |
-|-------|--------|------|
-| 1 | UK GDPR Article 17 — formal erasure request | Day 0 — **start here** |
-| 2 | Article 12(3) deadline reminder | 7 days, no response |
-| 3 | Trust & Safety + Community Standards | 14 days |
-| 4 | Formal rebuttal of refusal | Meta refuses |
-| 5 | Final notice before ICO | 28 days |
-| 6 | Post-ICO continued non-compliance | After ICO complaint |
+## 📋 Campaign rounds
 
-### Google track (3 rounds)
+<table>
+<thead>
+<tr><th>Track</th><th>Rounds</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Meta</strong></td><td>6</td><td>GDPR → reminder → Trust & Safety → rebuttal → ICO notice → post-ICO</td></tr>
+<tr><td><strong>Google</strong></td><td>3</td><td>Defamation → personal info → resubmit with case history</td></tr>
+<tr><td><strong>ICO</strong></td><td>1</td><td>After Meta round 4+ or 30 days without removal</td></tr>
+</tbody>
+</table>
 
-| Round | Letter | When |
-|-------|--------|------|
-| 1 | Defamation delisting (UK) | Day 0 (parallel with Meta R1) |
-| 2 | Personal info / doxxing form | Day 7 |
-| 3 | Resubmission with Meta/ICO history | Day 30 |
+Each letter includes a case reference (e.g. `TG-ER-THOMAS-GOLLO-META-R1`).
 
-### ICO track (1 round)
+---
 
-| Round | Letter | When |
-|-------|--------|------|
-| 1 | Full ICO complaint against Meta | After Meta round 4+ or 30 days |
-
-Each letter includes a **case reference** (e.g. `TG-ER-THOMAS-GOLLO-META-R1`) — quote it in every email.
-
-## Commands
+## 🖥️ Commands
 
 | Command | Purpose |
 |---------|---------|
 | `campaign init` | Start campaign, generate round 1 |
-| `campaign sent --track meta --round N` | Record that you sent round N |
-| `campaign refused --track meta --reason "..."` | Record refusal → auto-generates next round |
-| `campaign no-response --track meta` | No reply in 7 days → next round |
-| `campaign next` | Generate next escalation package |
+| `campaign sent --track meta --round N` | Record submission |
+| `campaign no-response --track meta` | 7 days silence → next round |
+| `campaign refused --track meta --reason "..."` | Refusal → rebuttal letter |
 | `campaign status` | Dashboard |
-| `campaign success` | Mark removed |
-| `evidence` | SHA-256 evidence pack for ICO |
-| `monitor` | Find Google URLs to delist |
+| `campaign success` | Mark content removed |
+| `daemon once` | Daily monitor + Slack + escalate |
+| `monitor` | Scan search for indexed URLs |
 | `close` | Facebook closure checklist |
-| `daemon once` | Daily VPS job (monitor + Slack + escalate) |
 
-## VPS automation (24/7 on a server)
-
-Deploy on any Linux VPS — daily scans + Slack pings. Full guide: **`deploy/README.md`**
-
-```bash
-# In config.yaml: slack_webhook_url + optional SerpAPI key for daily photo search
-python3 main.py daemon once
-
-# Docker — runs daily at 08:00 UTC
-cd deploy && docker compose up -d --build
-```
-
-| Automated | Not possible |
-|-----------|--------------|
-| Daily name search | Force-delete Facebook |
-| Daily reverse image search (API key) | Auto-submit Google web forms |
-| Slack alerts on new URLs | Scrape private Facebook groups |
-| Next Meta letter every 7 days | Guaranteed removal |
-| Optional email to Meta (off by default) | |
-
-## Your post (pre-configured)
-
-**URL:** https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/
-
-## What success looks like
-
-1. Meta deletes post + comments (source removal)
-2. Google delists any indexed URLs (search removal)
-3. You close Facebook (`python3 main.py close`)
-4. Monthly `monitor` for 3 months to catch re-indexing
-
-## Honest limits
-
-Software cannot force instant deletion. This tool matches what Removify and similar firms do — **formal requests, resubmissions, escalating legal pressure** — except you run it yourself for free. Persistence across rounds is what wins.
+VPS deploy: **`deploy/README.md`**
 
 ---
 
-*Templates only — not legal advice.*
+## 🔔 VPS automation (~£5/month)
+
+```bash
+cd deploy && docker compose up -d --build
+```
+
+| Automated daily | Manual (~2 min when Slack pings) |
+|-----------------|----------------------------------|
+| Name search | Google removal web forms |
+| Photo search (SerpAPI/TinEye) | — |
+| Slack alerts | — |
+| Next Meta letter / email | — |
+
+---
+
+## 📄 License
+
+**MIT License** — Copyright © 2026 **Thomas Gollogly**. You made this; you own it.
+
+See **[LICENSE](LICENSE)** for full terms. Free to use, modify, and distribute with attribution.
+
+> ReclaimKit is independent — not affiliated with Meta, Google, Removify, or any reputation service. Templates are not legal advice.
+
+---
+
+<p align="center">
+  <sub>Built in Northern Ireland · GDPR Article 17 · Defamation Act (NI) 2022</sub>
+</p>

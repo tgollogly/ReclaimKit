@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CLI for online harassment evidence, takedown requests, and monitoring."""
+"""ReclaimKit — UK/NI reputation reclaim CLI."""
 
 from __future__ import annotations
 
@@ -232,7 +232,7 @@ def cmd_all(args: argparse.Namespace) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Multi-round removal campaign for online harassment (UK/NI).",
+        description="ReclaimKit — UK/NI multi-round removal campaign and monitoring.",
     )
     parser.add_argument("--config", default="config.yaml", help="Path to config file")
     sub = parser.add_subparsers(dest="command", required=True)
