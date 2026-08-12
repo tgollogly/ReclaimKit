@@ -65,6 +65,14 @@ Sources: [Removify FAQ](https://removify.com/faq/how-much-does-it-cost-to-remove
 
 ---
 
+## 📖 Full documentation
+
+**Start here:** **[docs/COMPLETE-GUIDE.md](docs/COMPLETE-GUIDE.md)** · [PDF](docs/COMPLETE-GUIDE.pdf)
+
+Step-by-step guide covering setup, Meta GDPR rounds, Google delisting, ICO, Facebook closure, Windows 11/WSL, FAQ, and a printable checklist.
+
+---
+
 ## ⚡ Quick start
 
 ```bash
