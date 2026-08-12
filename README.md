@@ -74,6 +74,27 @@ Each letter includes a **case reference** (e.g. `TG-ER-THOMAS-GOLLO-META-R1`) �
 | `evidence` | SHA-256 evidence pack for ICO |
 | `monitor` | Find Google URLs to delist |
 | `close` | Facebook closure checklist |
+| `daemon once` | Daily VPS job (monitor + Slack + escalate) |
+
+## VPS automation (24/7 on a server)
+
+Deploy on any Linux VPS — daily scans + Slack pings. Full guide: **`deploy/README.md`**
+
+```bash
+# In config.yaml: slack_webhook_url + optional SerpAPI key for daily photo search
+python3 main.py daemon once
+
+# Docker — runs daily at 08:00 UTC
+cd deploy && docker compose up -d --build
+```
+
+| Automated | Not possible |
+|-----------|--------------|
+| Daily name search | Force-delete Facebook |
+| Daily reverse image search (API key) | Auto-submit Google web forms |
+| Slack alerts on new URLs | Scrape private Facebook groups |
+| Next Meta letter every 7 days | Guaranteed removal |
+| Optional email to Meta (off by default) | |
 
 ## Your post (pre-configured)
 
