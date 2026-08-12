@@ -18,10 +18,12 @@ irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-wi
 Or:
 
 ```powershell
-wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/reclaimkit && git clone https://github.com/tgollogly/reclaimkit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && if [ -d ~/reclaimkit/.git ]; then cd ~/reclaimkit && git pull && ./scripts/wsl-setup-and-test.sh; else git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh scripts/wsl-reset-repo.sh && ./scripts/wsl-setup-and-test.sh; fi"
 ```
 
 Pass = **`SETUP COMPLETE`**.
+
+> **Do not** prepend `rm -rf ~/reclaimkit` — Docker creates root-owned files in `output/` and a normal delete will fail with "Permission denied". Use `./scripts/wsl-reset-repo.sh` for a clean reinstall.
 
 ---
 
@@ -67,12 +69,13 @@ You should see a Linux prompt like `username@PC:~$`
 
 ```bash
 sudo apt update && sudo apt install -y git
-rm -rf ~/reclaimkit
-git clone https://github.com/tgollogly/reclaimkit.git ~/reclaimkit
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
 cd ~/reclaimkit
-chmod +x scripts/wsl-setup-and-test.sh
+chmod +x scripts/wsl-setup-and-test.sh scripts/wsl-reset-repo.sh
 ./scripts/wsl-setup-and-test.sh
 ```
+
+Already installed? Re-run `./scripts/wsl-setup-and-test.sh` — no need to delete the folder.
 
 The script will:
 
@@ -90,7 +93,13 @@ The script will:
 
 ## Part 3 — Configure before emailing Meta
 
-Still in WSL:
+**From PowerShell** (do not type `nano` at `PS C:\>` — it is not installed on Windows):
+
+```powershell
+wsl -d Ubuntu nano ~/reclaimkit/config.yaml
+```
+
+**Or in Ubuntu/WSL** (`username@PC:~$` prompt):
 
 ```bash
 nano ~/reclaimkit/config.yaml
@@ -201,6 +210,8 @@ All from `~/reclaimkit/deploy`:
 
 | Problem | Fix |
 |---------|-----|
+| `nano` not recognized in PowerShell | Use `wsl -d Ubuntu nano ~/reclaimkit/config.yaml` or open Ubuntu from Start menu |
+| `Permission denied` deleting `~/reclaimkit` | Run `./scripts/wsl-reset-repo.sh` (stops Docker, uses sudo) |
 | `Docker daemon not running` | Start Docker Desktop on Windows |
 | `wsl: command not found` | Run `wsl --install`, restart |
 | `Cannot connect to Docker` | Docker Desktop → WSL Integration → Ubuntu ON |
@@ -213,10 +224,17 @@ All from `~/reclaimkit/deploy`:
 ## Undo everything (WSL)
 
 ```bash
+cd ~/reclaimkit
+./scripts/wsl-reset-repo.sh
+```
+
+Or manually:
+
+```bash
 cd ~/reclaimkit/deploy
-docker compose down
+docker compose down --remove-orphans
 cd ~
-rm -rf ~/reclaimkit
+sudo rm -rf ~/reclaimkit
 ```
 
 ---

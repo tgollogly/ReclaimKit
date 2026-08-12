@@ -40,7 +40,7 @@ Write-Host "  Make sure Docker Desktop is open and says 'Running'." -ForegroundC
 Start-Sleep -Seconds 2
 
 $bashCmd = @'
-sudo apt update && sudo apt install -y git && rm -rf ~/reclaimkit && git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh
+sudo apt update && sudo apt install -y git && if [ -d ~/reclaimkit/.git ]; then cd ~/reclaimkit && git pull && ./scripts/wsl-setup-and-test.sh; else git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit && cd ~/reclaimkit && chmod +x scripts/wsl-setup-and-test.sh scripts/wsl-reset-repo.sh && ./scripts/wsl-setup-and-test.sh; fi
 '@
 
 Write-Host "[3/3] Running setup inside Linux (this takes a few minutes)..." -ForegroundColor Green
@@ -66,9 +66,14 @@ Write-Host "============================================" -ForegroundColor Green
 Write-Host " NEXT STEPS" -ForegroundColor Green
 Write-Host "============================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "  1. Open Ubuntu (Start menu) and run:  nano ~/reclaimkit/config.yaml"
+Write-Host "  1. Edit config (do NOT run nano in PowerShell — use one of these):"
+Write-Host "       wsl -d Ubuntu nano ~/reclaimkit/config.yaml"
+Write-Host "     Or open Ubuntu from Start menu and run:  nano ~/reclaimkit/config.yaml"
 Write-Host "  2. Add screenshots to:  ~/reclaimkit/evidence/screenshots/"
 Write-Host "  3. Email Meta using the letter in ~/reclaimkit/output/campaign-package-.../"
+Write-Host ""
+Write-Host "Fresh reinstall (stops Docker, removes old files):"
+Write-Host "  wsl -d Ubuntu bash -c 'cd ~/reclaimkit && ./scripts/wsl-reset-repo.sh && ./scripts/wsl-setup-and-test.sh'"
 Write-Host ""
 Write-Host "Full guide: https://github.com/tgollogly/ReclaimKit/blob/main/README.md"
 Write-Host ""
