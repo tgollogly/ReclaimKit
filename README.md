@@ -73,6 +73,7 @@ Sources: [Removify FAQ](https://removify.com/faq/how-much-does-it-cost-to-remove
 | **Complete Guide** | [MD](docs/COMPLETE-GUIDE.md) · [PDF](docs/COMPLETE-GUIDE.pdf) |
 | **Auto-email (free Gmail)** | [MD](docs/AUTO-EMAIL-SETUP.md) · [PDF](docs/AUTO-EMAIL-SETUP.pdf) |
 | **VPS setup** | [MD](deploy/VPS-GUIDE.md) · [PDF](docs/VPS-GUIDE.pdf) |
+| **Windows WSL + Docker** | [MD](docs/WINDOWS-WSL-DOCKER.md) |
 
 ```bash
 ./scripts/audit.sh          # verify codebase
