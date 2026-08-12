@@ -12,7 +12,9 @@
 - [Send Round 1 to Meta](COMPLETE-GUIDE.md#8-how-to-send-round-1-to-meta)
 - [Facebook login FAQ](COMPLETE-GUIDE.md#4-facebook-login--what-matters)
 - [Close Facebook after removal](COMPLETE-GUIDE.md#12-closing-facebook-after-removal)
-- [Printable checklist](COMPLETE-GUIDE.md#20-checklist--print-and-tick-off)
+- [Meta rejected your report](COMPLETE-GUIDE.md#22-meta-rejected-your-report--what-now)
+- [Community Standards vs GDPR](COMPLETE-GUIDE.md#21-community-standards-vs-gdpr)
+- [Docker auto-save](COMPLETE-GUIDE.md#23-docker--does-it-auto-save)
 
 ## Regenerate the PDF
 

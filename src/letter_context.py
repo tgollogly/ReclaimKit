@@ -27,13 +27,18 @@ def format_address(subject: dict[str, Any]) -> str:
     return "\n".join(p for p in parts if p)
 
 
+def section(title: str) -> str:
+    line = "=" * 78
+    return f"\n{line}\n{title.upper()}\n{line}\n"
+
+
 def comment_block(config: dict[str, Any], *, numbered: bool = True) -> str:
     commenters = config["case"].get("alleged_commenters", [])
     if not commenters:
         return "  (No comments listed in config.yaml — add alleged_commenters.)"
     lines: list[str] = []
     for idx, c in enumerate(commenters, 1):
-        prefix = f"{idx}. " if numbered else "• "
+        prefix = f"{idx}. " if numbered else "- "
         lines.append(
             f'{prefix}Display name: "{c["display_name"]}" '
             f'({c.get("posted_approx", "date unknown")})\n'
@@ -67,5 +72,95 @@ def false_allegations_summary() -> str:
         "The thread contains specific false imputations of serious criminal and sexual "
         "misconduct, including claims that I drug drinks and engage in inappropriate "
         "conduct toward family members. I deny each allegation absolutely. No factual "
-        "basis for these statements has ever existed."
+        "basis for these statements has ever existed. No court, police force, or "
+        "regulator has ever found any basis for these claims."
     )
+
+
+def harm_and_distress_block(config: dict[str, Any]) -> str:
+    fb = config["case"].get("facebook", {})
+    group = fb.get("group_name", "the named Facebook group")
+    custom = config["case"].get("harm_statement", "").strip()
+    if custom:
+        return custom
+
+    return (
+        "This content has caused me serious and ongoing distress, reputational harm, "
+        "and anxiety. I am a private individual in Northern Ireland, not a public figure. "
+        "The post publishes my likeness and full name alongside solicited abusive commentary "
+        f'in the group "{group}". This is targeted reputational harm — functionally bullying '
+        "and harassment — regardless of whether Meta's Community Standards team classified "
+        "an in-app report differently. Under UK GDPR I am entitled to erasure of my personal "
+        "data irrespective of Community Standards outcomes."
+    )
+
+
+def meta_reports_block(config: dict[str, Any]) -> str:
+    fb = config["case"].get("facebook", {})
+    reports = fb.get("meta_reports")
+    if isinstance(reports, list) and reports:
+        lines = [
+            "I have already used Meta's in-app reporting tools. Those decisions do NOT "
+            "discharge Meta's UK GDPR obligations and are recorded below for completeness:",
+            "",
+        ]
+        for idx, report in enumerate(reports, 1):
+            if not isinstance(report, dict):
+                continue
+            lines.append(
+                f"{idx}. {report.get('type', 'Report')} "
+                f"({report.get('date', 'date not recorded')})\n"
+                f"   Outcome: {report.get('outcome', 'pending')}"
+            )
+            if report.get("notes"):
+                lines.append(f"   Notes: {report['notes']}")
+        lines.append("")
+        lines.append(
+            "A Community Standards rejection (e.g. \"does not violate our policies\") is "
+            "a moderation outcome — not a lawful Article 17(3) exemption. This formal request "
+            "must be processed by Meta's data protection function under UK GDPR."
+        )
+        return "\n".join(lines)
+
+    if fb.get("reported_to_meta"):
+        return (
+            "I reported this content through Meta's in-app reporting tools. Meta responded "
+            "that the content \"does not go against Community Standards\" and declined removal "
+            "(support message, August 2026 — screenshot attached). That moderation outcome "
+            "does NOT satisfy Article 17 UK GDPR and does NOT constitute a valid refusal under "
+            "Article 12(4). I also reported the group for hate speech; group-level moderation "
+            "is separate from my personal erasure rights."
+        )
+
+    return (
+        "I am submitting this Article 17 request without reliance on in-app reporting alone."
+    )
+
+
+def group_pattern_block(config: dict[str, Any]) -> str:
+    fb = config["case"].get("facebook", {})
+    pattern = fb.get("group_pattern", "").strip()
+    if pattern:
+        return pattern
+
+    group = fb.get("group_name", "")
+    if "AreWeDatingTheSameGuy" in group or "AWDTSG" in group.upper():
+        return (
+            f'The group "{group}" follows a known pattern of publishing men\'s photographs '
+            "and names soliciting unverified \"red flag\" allegations. The same format has "
+            "harmed multiple private individuals. That systemic pattern reinforces that this "
+            "processing lacks legitimate purpose and causes disproportionate harm, but my "
+            "request concerns erasure of MY personal data only."
+        )
+    return ""
+
+
+def search_queries_block(config: dict[str, Any]) -> str:
+    queries = config.get("monitor", {}).get("search_queries", [])
+    if not queries:
+        return "  (Add monitor.search_queries in config.yaml and run: python3 main.py monitor)"
+    lines = []
+    for q in queries:
+        lines.append(f'  - Google search: https://www.google.com/search?q={q.replace(" ", "+")}')
+    lines.append("  - Add any result URLs from output/search-monitor-*.txt after running monitor")
+    return "\n".join(lines)

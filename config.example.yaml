@@ -27,6 +27,22 @@ case:
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
     reported_to_meta: true
     meta_report_reference: ""
+    # Document in-app reports — letters cite these to show CS rejection != GDPR answer
+    meta_reports:
+      - type: "In-app content report (photo/post)"
+        date: "2026-08-12"
+        outcome: "Rejected — We didn't remove the photo; does not violate Community Standards"
+        notes: "Attach screenshot of Meta support message"
+      - type: "Group report (hate speech)"
+        date: "2026-08-12"
+        outcome: "Submitted — awaiting outcome"
+    group_pattern: >
+      The group follows an AreWeDatingTheSameGuy pattern: men's photos and names
+      posted soliciting unverified allegations. The same format has harmed multiple
+      people. My request is for erasure of MY data only.
+
+  # Optional — override default harm wording in letters
+  # harm_statement: "Custom paragraph describing impact on you."
 
   alleged_commenters:
     - display_name: "BrightPanda3834"

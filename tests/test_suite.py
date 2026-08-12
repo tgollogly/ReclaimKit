@@ -133,6 +133,27 @@ def test_meta_round1_letter_contains_url(tmp_config):
     letter = META_ROUNDS[1][1](cfg, {})
     assert "Article 17" in letter
     assert cfg["case"]["facebook"]["post_url"] in letter
+    assert "Community Standards" in letter
+    assert "privacy@facebook.com" in letter
+
+
+def test_meta_round1_cites_reports_when_configured(tmp_config):
+    _, cfg = tmp_config
+    cfg["case"]["facebook"]["meta_reports"] = [
+        {"type": "In-app report", "date": "2026-08-12", "outcome": "Rejected"},
+    ]
+    letter = META_ROUNDS[1][1](cfg, {})
+    assert "Rejected" in letter
+    assert "Article 17(3)" in letter or "Article 17" in letter
+
+
+def test_google_round1_includes_defamation_grounds(tmp_config):
+    _, cfg = tmp_config
+    from src.escalation_letters import GOOGLE_ROUNDS
+
+    gletter = GOOGLE_ROUNDS[1][1](cfg, {})
+    assert "Defamation" in gletter
+    assert "serious reputational harm" in gletter.lower()
 
 
 def test_campaign_state_roundtrip(tmp_config):
