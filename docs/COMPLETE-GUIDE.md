@@ -38,6 +38,10 @@
 21. [Community Standards vs GDPR](#21-community-standards-vs-gdpr)
 22. [Meta rejected your report — what now](#22-meta-rejected-your-report--what-now)
 23. [Docker — does it auto-save?](#23-docker--does-it-auto-save)
+24. [Unsure who posted? (safe wording)](#24-unsure-who-posted-safe-wording)
+25. [Job hunting — will this hurt you?](#25-job-hunting--will-this-hurt-you)
+26. [How long until content is erased?](#26-how-long-until-content-is-erased)
+27. [Cheap VPS for automation + free AI](#27-cheap-vps-for-automation--free-ai)
 
 ---
 
@@ -193,7 +197,7 @@ See [Section 13](#13-daily-monitoring-and-vps-automation) and `deploy/README.md`
 
 ```bash
 python3 main.py doctor          # health check
-python3 -m pytest tests/ -v     # run test suite (17 tests)
+python3 -m pytest tests/ -v     # run test suite (20 tests)
 ```
 
 ---
@@ -228,6 +232,7 @@ case:
     post_date: "2025-06-05"
     post_caption: "Any red flags Thomas gollogly"
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
+    post_origin: uncertain   # uncertain | third_party | self — see section 24
     reported_to_meta: true
     meta_reports:
       - type: "In-app content report (photo/post)"
@@ -723,7 +728,9 @@ Then proceed toward ICO if still not removed after 30 days.
 
 ## 18. Troubleshooting
 
-### Run the doctor
+### Run the doctor (health check — not Docker)
+
+**Doctor** = validate your setup before sending letters. **Docker** = run daily monitoring on a VPS (section 23).
 
 ```bash
 python3 main.py doctor
@@ -749,7 +756,7 @@ Core checks must pass (marked ✓). Warnings (marked !) are items you must fix b
 python3 -m pytest tests/ -v
 ```
 
-All 17 tests should pass.
+All 20 tests should pass.
 
 Run the full audit script:
 
@@ -850,6 +857,10 @@ Paid removal firms see this rejection daily. Their next step is always **GDPR to
 
 ## 23. Docker — does it auto-save?
 
+> **Not the same as `doctor`:** **Docker** runs ReclaimKit on a VPS in the background.
+> **`python3 main.py doctor`** is a separate health-check command (config, screenshots, letters).
+> See [section 18](#18-troubleshooting) for `doctor`.
+
 **Yes.** Docker does not lose your campaign when the container restarts.
 
 These folders are **mounted from your PC/VPS** (not stored only inside the container):
@@ -892,6 +903,96 @@ cd deploy && docker compose up -d --build
 ```
 
 If the container is deleted and recreated, **your data remains** in `output/` and `evidence/` on the host.
+
+---
+
+## 24. Unsure who posted? (safe wording)
+
+**You can still remove everything.** UK GDPR protects **your data** — not only cases where someone else posted.
+
+If you do not remember whether you posted the caption yourself (e.g. after drinking, testing the group), use:
+
+```yaml
+case:
+  facebook:
+    post_origin: uncertain   # DEFAULT — safest
+```
+
+| Value | When to use |
+|-------|-------------|
+| **uncertain** | You are not sure who created the post — **use this if in any doubt** |
+| **third_party** | You are certain someone else posted your photo/name |
+| **self** | You posted it and want all data + comments removed |
+
+**uncertain** letters say:
+- You request erasure of your photo, name, and comments
+- You do **not** consent to continued processing
+- **Without claiming** someone else definitely posted
+- **Without admitting** you posted — legally neutral
+
+You are **not** required to tell Meta you might have posted drunk. Do **not** lie if they ask directly later.
+
+The harmful **comments** are still from other people — erasing those protects you regardless of who wrote the caption.
+
+---
+
+## 25. Job hunting — will this hurt you?
+
+| Risk | Level | Notes |
+|------|-------|-------|
+| **Private Facebook group post** | Medium | Not on Google for everyone, but group members see it |
+| **Google search for your name** | Medium–High | If indexed, employers *may* find it — run `python3 main.py monitor` |
+| **AWSDTG specifically** | Low | Most recruiters do not search this group by name |
+| **After Meta removal + Google delist** | Low | Source gone + search hidden = much safer |
+
+**What helps job hunting:**
+1. Remove source (Meta GDPR) — **do this first**
+2. Google delisting + **Results About You** alerts
+3. Do **not** post about the case publicly (creates new SEO)
+4. LinkedIn/CV focus on skills — most NI employers check LinkedIn, not AWSDTG
+
+**Reality:** Until removed, there is **some** risk if someone Googles you. After removal and delisting (typically 1–3 months), risk drops sharply. This is **not** a criminal record or court case — it does not appear on standard employment checks.
+
+---
+
+## 26. How long until content is erased?
+
+| Stage | Typical time | What happens |
+|-------|--------------|--------------|
+| **Send GDPR Round 1** | Day 1 (today) | Clock starts — Meta has **1 calendar month** to respond |
+| **Meta removes post** | 1–4 weeks | Many cases resolve Round 1–3 |
+| **Meta refuses / silence** | Week 2–4 | Escalation rounds + ICO |
+| **ICO complaint** | Week 4–8+ | Free regulator pressure |
+| **Google delisting** | 1–4 weeks after submit | Hides from search (parallel track) |
+| **Google cache clears** | Days–weeks after delist | Old snippets may linger briefly |
+| **Full campaign** | **1–3 months** typical | Complex refusals take longer |
+
+**Private group posts** are often **not indexed** by Google — but run monitor to check.
+
+There is **no instant delete** — Meta has up to one month by law. ReclaimKit automates follow-up so you do not pay £400+ for someone else to send the same emails.
+
+---
+
+## 27. Cheap VPS for automation + free AI
+
+Full guide: **[deploy/VPS-GUIDE.md](../deploy/VPS-GUIDE.md)**
+
+| Provider | Cost | Recommendation |
+|----------|------|----------------|
+| **Hetzner CX22** | ~£4.50/mo | **Best value** — 4 GB RAM, EU servers, runs Docker + ReclaimKit |
+| DigitalOcean | ~$6/mo | Easy for beginners |
+| Oracle Cloud Free | £0 | Powerful if you get approved — setup harder |
+
+One VPS can run:
+- ReclaimKit daily monitor (this repo)
+- **Ollama** — free local AI (Llama, Mistral)
+- n8n, Uptime Kuma, VPN, other scripts
+
+```bash
+cd deploy && docker compose up -d --build
+```
+
+Data **auto-saves** to `output/` on the host — see section 23.
 
 ---
 

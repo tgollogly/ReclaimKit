@@ -67,9 +67,17 @@ Sources: [Removify FAQ](https://removify.com/faq/how-much-does-it-cost-to-remove
 
 ## 📖 Full documentation
 
-**Start here:** **[docs/COMPLETE-GUIDE.md](docs/COMPLETE-GUIDE.md)** · [PDF](docs/COMPLETE-GUIDE.pdf)
+| Guide | Links |
+|-------|-------|
+| **Quick Start** | [MD](docs/QUICK-START.md) · [PDF](docs/QUICK-START.pdf) |
+| **Complete Guide** | [MD](docs/COMPLETE-GUIDE.md) · [PDF](docs/COMPLETE-GUIDE.pdf) |
+| **Auto-email (free Gmail)** | [MD](docs/AUTO-EMAIL-SETUP.md) · [PDF](docs/AUTO-EMAIL-SETUP.pdf) |
+| **VPS setup** | [MD](deploy/VPS-GUIDE.md) · [PDF](docs/VPS-GUIDE.pdf) |
 
-Step-by-step guide covering setup, Meta GDPR rounds, Google delisting, ICO, Facebook closure, Windows 11/WSL, FAQ, and a printable checklist.
+```bash
+./scripts/audit.sh          # verify codebase
+./scripts/build-all-pdfs.sh # rebuild all PDFs
+```
 
 ---
 
@@ -130,7 +138,7 @@ Each letter includes a case reference (e.g. `TG-ER-THOMAS-GOLLO-META-R1`).
 | `daemon once --dry-run` | Test automation without writes |
 | `all` | Evidence + campaign + osint + monitor |
 
-VPS deploy: **`deploy/README.md`**
+VPS deploy: **`deploy/README.md`** · **`deploy/VPS-GUIDE.md`** (cheap servers + free AI)
 
 ---
 
@@ -152,7 +160,7 @@ cd deploy && docker compose up -d --build
 ## 🧪 Test & verify
 
 ```bash
-python3 -m pytest tests/ -v      # 17 automated tests
+python3 -m pytest tests/ -v      # 20 automated tests
 python3 main.py doctor             # validate your setup
 python3 main.py --config config.example.yaml doctor
 ./scripts/audit.sh                 # full repo audit

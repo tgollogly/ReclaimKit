@@ -16,6 +16,8 @@ from src.letter_context import (
     harm_and_distress_block,
     meta_reports_block,
     post_details,
+    publication_context_block,
+    publication_summary_for_google,
     search_queries_block,
     section,
     subject_line,
@@ -40,6 +42,7 @@ def meta_round_1_gdpr_initial(config: dict[str, Any], ctx: dict[str, Any]) -> st
     ref = case_ref(config, "META-R1")
     group_note = group_pattern_block(config)
     group_section = f"\n{group_note}\n" if group_note else ""
+    pub = publication_context_block(config)
 
     return f"""{_header(ref, f"UK GDPR Article 17 — Right to Erasure — {sub['name']}")}
 
@@ -57,18 +60,15 @@ I, {sub['name']}, a data subject resident in Northern Ireland, United Kingdom,
 hereby exercise my right to erasure under Article 17 of the UK General Data
 Protection Regulation (UK GDPR) and section 47 of the Data Protection Act 2018.
 
+{pub['intro']}
+
 This is a formal legal request — not an informal report. Please route this email
 to Meta's data protection / privacy team (not Community Standards moderation only)
 and treat it as requiring a response within one calendar month under Article 12(3)
 UK GDPR.
 
 {section("1. Personal data requiring erasure")}
-(a) My photograph (selfie), published without my knowledge or consent;
-(b) My personal name — "{sub['name']}" / "Thomas gollogly" — in connection with
-    that image and defamatory commentary;
-(c) All comments that identify, describe, or publish false statements about me;
-(d) Metadata linking my identity to this content (including group post indexing,
-    notifications, and any copies held on Meta systems).
+{pub['personal_data']}
 
 {false_allegations_summary()}
 
@@ -86,20 +86,16 @@ Comments containing my personal data / false allegations:
 
 {section("3. Legal grounds (Article 17(1) UK GDPR)")}
 (a) Article 17(1)(a) — Data no longer necessary for the purpose processed.
-    The post serves no legitimate purpose regarding me. I am not a party to any
-    proceedings; no journalistic, academic, or public-interest justification exists
-    for publishing my image with solicited "red flags."
+    I require this data erased. No journalistic, academic, or public-interest
+    justification exists for continued processing of my image with solicited allegations.
 
-(b) Article 17(1)(c) — Withdrawal of consent. I never consented to this processing.
-    No lawful basis under Article 6(1) applies to publishing my likeness and name in
-    this context.
+{pub['consent_ground']}
 
 (c) Article 17(1)(d) — Objection under Article 21. Processing causes disproportionate
     harm to my rights, dignity, and reputation as a private individual in Northern
     Ireland.
 
-(d) Article 17(1)(e) — Unlawful processing. Publication of my image without consent,
-    combined with false criminal and sexual allegations, is unlawful processing.
+{pub['unlawful_ground']}
 
 Article 17(2) requires reasonable steps to inform other controllers where data was
 made public. Article 19 requires communication of erasure to recipients unless
@@ -432,8 +428,7 @@ Search result URLs (add each google.com/search link that shows this content):
 {section("Statement of fact")}
 I am {sub['name']}, a private individual resident in Northern Ireland. Search results
 for my name link to a Facebook group post in "{post['group']}" (dated {post['date']})
-that publishes my photograph and name without consent alongside comments containing
-false defamatory imputations of criminal and sexual misconduct.
+that {publication_summary_for_google(config)}
 
 {section("Why statements are false")}
 {false_allegations_summary()}
@@ -483,7 +478,7 @@ Email: {sub['email']}
 This request complements defamation submission {case_ref(config, 'GOOG-R1')}.
 
 {section("Grounds")}
-1. Personal photograph published without my consent, linked to my full name in search;
+1. Personal photograph and full name linked in Google Search with harmful context;
 2. Page content solicits harassment ("red flags" / warning posts about a private citizen);
 3. Aggregated personal data (name + image + location references in comments) posted
    to cause harm, not for legitimate purpose;
