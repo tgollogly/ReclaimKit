@@ -233,6 +233,116 @@ You only rerun `./scripts/wsl-setup-and-test.sh` if you delete the repo or move 
 
 **Docker Desktop must be Running** for daily automation. Your files stay on disk even if Docker is closed — you just can't run docker commands until you start it again.
 
+#### Verify autosave is working
+
+Autosave is **built in** — `deploy/docker-compose.yml` bind-mounts your folders to disk:
+
+```yaml
+volumes:
+  - ../config.yaml:/app/config.yaml:ro
+  - ../evidence:/app/evidence      # screenshots — saved on laptop
+  - ../output:/app/output          # letters, state, logs — saved on laptop
+```
+
+Run this anytime in Ubuntu:
+
+```bash
+cd ~/stop-assholes
+chmod +x scripts/check-autosave.sh
+./scripts/check-autosave.sh
+```
+
+Or check manually:
+
+```bash
+ls ~/stop-assholes/config.yaml
+ls ~/stop-assholes/output/campaign/state.json
+cd ~/stop-assholes/deploy && docker compose ps
+```
+
+If `state.json` exists and the container is **Up**, autosave is working.
+
+---
+
+## Laptop vs cloud VPS — which do you need?
+
+| | **Your laptop (Windows + WSL)** | **Cloud VPS (~£5/mo)** |
+|---|--------------------------------|------------------------|
+| **Best for** | Getting started, editing config, emailing Meta | 24/7 automation while PC is off |
+| **You already have this** | ✓ if setup completed | Optional extra |
+| **Daily cron (08:00 UTC)** | Yes, when Docker Desktop is running | Yes, always on |
+| **Autosave** | Yes — `~/stop-assholes/` on your PC | Yes — `/root/stop-assholes/` on server |
+| **Cost** | £0 | ~£4.50/mo (Hetzner) |
+| **Needs PC on?** | Docker Desktop must be running | No |
+
+**Recommended path for Thomas:**
+
+1. **Run on laptop first** (you are here) — configure, email Meta Round 1, verify it works  
+2. **Add VPS later** (optional) — only if you want monitoring when your laptop is off  
+
+You can use **both** — laptop for editing letters, VPS for always-on monitoring. Copy `config.yaml`, `evidence/`, and `output/` to the VPS to sync progress.
+
+---
+
+### Run on your laptop (daily use)
+
+**Open Ubuntu** → run these whenever you need ReclaimKit:
+
+```bash
+cd ~/stop-assholes/deploy
+docker compose ps                                              # container Up?
+docker compose run --rm stop-assholes python3 main.py campaign status
+docker compose run --rm stop-assholes python3 main.py campaign init   # after config edits
+docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1
+```
+
+**Edit config:** `nano ~/stop-assholes/config.yaml` → save `Ctrl+X`, `Y`, `Enter`  
+**Screenshots:** `\\wsl$\Ubuntu\home\useradmin\stop-assholes\evidence\screenshots\`  
+**Letters:** `\\wsl$\Ubuntu\home\useradmin\stop-assholes\output\`
+
+**Start automation** (if container stopped):
+
+```bash
+cd ~/stop-assholes/deploy && docker compose up -d
+```
+
+---
+
+### Deploy to cloud VPS (optional, 24/7)
+
+Use when you want daily monitoring even when your laptop is closed.
+
+**Full guide:** [deploy/VPS-GUIDE.md](deploy/VPS-GUIDE.md)
+
+1. Rent a VPS (recommended: **Hetzner CX22** ~£4.50/mo, Ubuntu 24.04)
+2. SSH in from PowerShell: `ssh root@YOUR_VPS_IP`
+3. On the VPS, run **one block**:
+
+```bash
+apt update && apt install -y git docker.io docker-compose-v2
+git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
+cd ~/stop-assholes
+cp config.example.yaml config.yaml
+nano config.yaml                    # same details as laptop — or copy config over
+mkdir -p evidence/screenshots output
+python3 main.py init 2>/dev/null || pip3 install -r requirements.txt
+python3 main.py campaign init
+cd deploy && docker compose up -d --build
+docker compose ps
+```
+
+4. **Copy your laptop progress to VPS** (optional, from Ubuntu on laptop):
+
+```bash
+scp ~/stop-assholes/config.yaml root@YOUR_VPS_IP:~/stop-assholes/
+scp -r ~/stop-assholes/evidence root@YOUR_VPS_IP:~/stop-assholes/
+scp -r ~/stop-assholes/output root@YOUR_VPS_IP:~/stop-assholes/
+```
+
+5. On VPS, restart container: `cd ~/stop-assholes/deploy && docker compose up -d`
+
+**VPS autosave:** same bind-mounts — data survives reboots at `~/stop-assholes/output/` on the server.
+
 ---
 
 ## How to test and deploy (all platforms)
@@ -455,34 +565,32 @@ crontab -e
 
 ---
 
-## VPS — cloud server
+## VPS — cloud server (optional)
+
+See **[Laptop vs cloud VPS](#laptop-vs-cloud-vps--which-do-you-need)** above for when you need this.
 
 Use a VPS (~£4.50/mo on Hetzner) when you want automation running 24/7 while your PC is off.
 
 Full guide: [deploy/VPS-GUIDE.md](deploy/VPS-GUIDE.md) · [deploy/README.md](deploy/README.md)
 
 ```bash
-# SSH into your VPS (Ubuntu)
-git clone https://github.com/tgollogly/stop-assholes.git
-cd stop-assholes
-pip install -r requirements.txt
-
-# Phase 2 — configure
+# SSH into your VPS (Ubuntu) — from PowerShell: ssh root@YOUR_VPS_IP
+apt update && apt install -y git docker.io docker-compose-v2
+git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
+cd ~/stop-assholes
 cp config.example.yaml config.yaml && nano config.yaml
 mkdir -p evidence/screenshots output
-# upload screenshots via scp or sftp
 
-# Phase 1 — test
-python3 main.py init
+python3 main.py init 2>/dev/null || pip3 install -r requirements.txt
 python3 main.py campaign init
 python3 main.py doctor
 python3 main.py daemon once --dry-run
 
-# Phase 3 — deploy
 cd deploy && docker compose up -d --build
 docker compose ps
+./scripts/check-autosave.sh    # verify autosave on VPS
 
-# Phase 4 — go live (email Meta from your laptop or the VPS)
+# After emailing Meta (from laptop or VPS):
 python3 main.py campaign sent --track meta --round 1
 ```
 
