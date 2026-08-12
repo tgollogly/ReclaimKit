@@ -61,7 +61,9 @@ def build_evidence_pack(config: dict[str, Any]) -> Path:
     entries: list[dict[str, Any]] = []
     copied = 0
     for path in sorted(source_dir.iterdir()):
-        if not path.is_file() or path.suffix.lower() not in IMAGE_EXTENSIONS:
+        if not path.is_file() or path.is_symlink():
+            continue
+        if path.suffix.lower() not in IMAGE_EXTENSIONS:
             continue
         dest = files_dir / path.name
         shutil.copy2(path, dest)

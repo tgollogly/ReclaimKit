@@ -2,30 +2,53 @@
 
 from __future__ import annotations
 
-import base64
 import hashlib
 from pathlib import Path
 from typing import Any
 
 import requests
 
+from src.security import resolve_under
+
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
+MAX_IMAGE_BYTES = 20 * 1024 * 1024
+REQUEST_TIMEOUT = 60
 
 
 def find_reference_image(config: dict[str, Any]) -> Path | None:
     cfg = config.get("automation", {}).get("image_search", {})
+    evidence_dir = Path(config["evidence"]["screenshots_dir"]).resolve()
+
     explicit = cfg.get("reference_image")
     if explicit:
-        path = Path(explicit)
-        if path.exists():
-            return path
-    evidence_dir = Path(config["evidence"]["screenshots_dir"])
+        try:
+            if Path(explicit).is_absolute():
+                path = Path(explicit).resolve()
+                if not str(path).startswith(str(evidence_dir)):
+                    return None
+            else:
+                path = resolve_under(evidence_dir, explicit)
+            if path.is_file() and not path.is_symlink():
+                return _validate_image(path)
+        except (ValueError, OSError):
+            return None
+
     if not evidence_dir.exists():
         return None
     for path in sorted(evidence_dir.iterdir()):
-        if path.suffix.lower() in IMAGE_EXTENSIONS and path.is_file():
-            return path
+        if path.is_file() and not path.is_symlink() and path.suffix.lower() in IMAGE_EXTENSIONS:
+            try:
+                return _validate_image(path)
+            except ValueError:
+                continue
     return None
+
+
+def _validate_image(path: Path) -> Path:
+    size = path.stat().st_size
+    if size <= 0 or size > MAX_IMAGE_BYTES:
+        raise ValueError(f"Image size out of range: {path.name}")
+    return path
 
 
 def run_image_search(config: dict[str, Any]) -> dict[str, Any]:
@@ -48,89 +71,74 @@ def run_image_search(config: dict[str, Any]) -> dict[str, Any]:
         report["results"] = _tineye_search(ref, cfg.get("tineye_api_key", ""))
     elif provider == "none":
         report["errors"].append(
-            "Image search disabled. Set automation.image_search.provider to serpapi or tineye "
-            "and add API key — see deploy/README.md"
+            "Image search disabled. Set automation.image_search.provider to serpapi or tineye"
         )
     else:
         report["errors"].append(f"Unknown provider: {provider}")
 
-    report["result_count"] = len(report["results"])
+    report["result_count"] = len([r for r in report["results"] if r.get("url")])
     return report
 
 
 def _serpapi_google_lens(image_path: Path, api_key: str) -> list[dict[str, Any]]:
     if not api_key:
-        return []
-    with image_path.open("rb") as handle:
-        b64 = base64.b64encode(handle.read()).decode("ascii")
-    url = "https://serpapi.com/search.json"
-    params = {
-        "engine": "google_lens",
-        "api_key": api_key,
-        "url": f"data:image/jpeg;base64,{b64}",
-    }
-    # SerpAPI Google Lens may require public URL — try file upload alternative
+        return [{"error": "Missing serpapi_key", "url": ""}]
     try:
-        resp = requests.get(url, params={"engine": "google_lens", "api_key": api_key}, timeout=30)
-        if resp.status_code != 200:
-            # Fallback: upload to serpapi with image file
-            with image_path.open("rb") as img:
-                resp = requests.post(
-                    "https://serpapi.com/search.json",
-                    data={"engine": "google_lens", "api_key": api_key},
-                    files={"image": img},
-                    timeout=60,
-                )
+        with image_path.open("rb") as img:
+            resp = requests.post(
+                "https://serpapi.com/search.json",
+                data={"engine": "google_lens", "api_key": api_key},
+                files={"image": (image_path.name, img, "application/octet-stream")},
+                timeout=REQUEST_TIMEOUT,
+            )
+        resp.raise_for_status()
         data = resp.json()
         if "error" in data:
             return [{"error": data["error"], "url": ""}]
         results: list[dict[str, Any]] = []
         for item in data.get("visual_matches", [])[:20]:
-            results.append({
-                "url": item.get("link", ""),
-                "title": item.get("title", ""),
-                "source": item.get("source", ""),
-                "provider": "serpapi_google_lens",
-            })
-        for item in data.get("exact_matches", [])[:10]:
-            results.append({
-                "url": item.get("link", ""),
-                "title": "exact match",
-                "source": item.get("source", ""),
-                "provider": "serpapi_google_lens",
-            })
+            link = item.get("link", "")
+            if link:
+                results.append({
+                    "url": link,
+                    "title": item.get("title", ""),
+                    "source": item.get("source", ""),
+                    "provider": "serpapi_google_lens",
+                })
         return results
-    except requests.RequestException as exc:
+    except (requests.RequestException, ValueError) as exc:
         return [{"error": str(exc), "url": ""}]
 
 
 def _tineye_search(image_path: Path, api_key: str) -> list[dict[str, Any]]:
     if not api_key:
-        return []
-    url = "https://api.tineye.com/rest/search/"
+        return [{"error": "Missing tineye_api_key", "url": ""}]
     try:
         with image_path.open("rb") as handle:
             resp = requests.post(
-                url,
+                "https://api.tineye.com/rest/search/",
                 headers={"X-API-Key": api_key},
                 files={"image": handle},
-                timeout=60,
+                timeout=REQUEST_TIMEOUT,
             )
+        resp.raise_for_status()
         data = resp.json()
         if data.get("status") != "ok":
             return [{"error": data.get("status", "tineye error"), "url": ""}]
         results: list[dict[str, Any]] = []
         for match in data.get("results", {}).get("matches", [])[:25]:
             for backlink in match.get("backlinks", [])[:3]:
-                results.append({
-                    "url": backlink.get("url", ""),
-                    "title": backlink.get("url", ""),
-                    "source": "tineye",
-                    "provider": "tineye",
-                    "score": match.get("score"),
-                })
+                url = backlink.get("url", "")
+                if url:
+                    results.append({
+                        "url": url,
+                        "title": url,
+                        "source": "tineye",
+                        "provider": "tineye",
+                        "score": match.get("score"),
+                    })
         return results
-    except requests.RequestException as exc:
+    except (requests.RequestException, ValueError) as exc:
         return [{"error": str(exc), "url": ""}]
 
 

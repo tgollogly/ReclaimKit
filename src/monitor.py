@@ -12,12 +12,21 @@ except ImportError:
     DDGS = None  # type: ignore[misc, assignment]
 
 
-HARMFUL_KEYWORDS = [
+HARMFUL_KEYWORDS_BASE = [
     "facebook",
     "arewedatingthesameguy",
     "red flags",
-    "gollogly",
+    "awdtsg",
 ]
+
+
+def _harmful_keywords(config: dict[str, Any]) -> list[str]:
+    kws = list(HARMFUL_KEYWORDS_BASE)
+    name = config.get("subject", {}).get("full_name", "")
+    for part in name.lower().split():
+        if len(part) > 2:
+            kws.append(part)
+    return kws
 
 
 def monitor_search_results(config: dict[str, Any]) -> dict[str, Any]:
@@ -80,7 +89,7 @@ def _is_potentially_harmful(item: dict[str, Any], config: dict[str, Any]) -> boo
     ).lower()
     name_parts = config["subject"]["full_name"].lower().split()
     has_name = all(part in text for part in name_parts if len(part) > 2)
-    has_harmful = any(kw in text for kw in HARMFUL_KEYWORDS)
+    has_harmful = any(kw in text for kw in _harmful_keywords(config))
     return has_name and (has_harmful or "facebook" in text)
 
 
