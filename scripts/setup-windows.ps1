@@ -1,9 +1,8 @@
 # ReclaimKit — Windows setup helper
 # Run this in PowerShell (PS C:\Users\...>). Do NOT run the Linux commands yourself.
 #
-# Usage:
-#   irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-windows.ps1 | iex
-# Or save this file and run:  .\setup-windows.ps1
+# Usage (repo must be public, or git auth configured first):
+#   .\setup-windows.ps1
 
 $ErrorActionPreference = "Stop"
 
@@ -41,7 +40,7 @@ Write-Host "  Make sure Docker Desktop is open and says 'Running'." -ForegroundC
 Start-Sleep -Seconds 2
 
 $bashCmd = @'
-sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh
+sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh
 '@
 
 Write-Host "[3/3] Running setup inside Linux (this takes a few minutes)..." -ForegroundColor Green
@@ -58,7 +57,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "SETUP FAILED. Common fixes:" -ForegroundColor Red
     Write-Host "  1. Start Docker Desktop and wait until it says Running" -ForegroundColor Red
     Write-Host "  2. Install Ubuntu:  wsl --install -d Ubuntu  (then restart)" -ForegroundColor Red
-    Write-Host "  3. Open Ubuntu from Start menu and run the bash commands in README" -ForegroundColor Red
+    Write-Host "  3. Repo is private — make it public or use a GitHub token for git clone" -ForegroundColor Red
     exit 1
 }
 

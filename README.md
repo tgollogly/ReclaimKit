@@ -36,27 +36,65 @@ The commands `git clone`, `chmod`, and `sudo apt` **do not work there**. That is
    ```
    Restart if asked.
 
-### Run setup — copy ONE of these into PowerShell
+### Run setup
 
-**Option A — easiest** (downloads and runs the setup script):
+> **Important:** This GitHub repo is **private**. The download script (`irm ...`) will **404** and `git clone` will ask for a password until you do **one** of the following:
+>
+> **Easiest — make the repo public** (you own it):  
+> https://github.com/tgollogly/ReclaimKit/settings → General → scroll to **Danger Zone** → **Change visibility** → **Public**
+>
+> **Or keep it private** — create a GitHub token: https://github.com/settings/tokens → **Generate new token (classic)** → check **repo** → copy the token. Use it as the password when `git clone` asks (username = `tgollogly`).
 
-```powershell
-irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-windows.ps1 | iex
-```
-
-**Option B — one line** (no download):
-
-```powershell
-wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
-```
-
-If `wsl -d Ubuntu` fails, replace it with just `wsl`:
+**After that**, copy **one line** into PowerShell (`PS C:\...>`):
 
 ```powershell
-wsl bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
 ```
+
+If `wsl -d Ubuntu` fails, use `wsl` instead:
+
+```powershell
+wsl bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+```
+
+If `git clone` asks for credentials inside that command, run setup **manually in Ubuntu** instead (see below).
 
 **Wait until you see `SETUP COMPLETE`.** Do not type anything else while it runs.
+
+### Or run manually in Ubuntu (if clone asks for login)
+
+1. Start menu → **Ubuntu** (prompt must be `useradmin@DESKTOP:~$`, not `PS C:\`)
+2. Type **one command at a time**, press Enter after each:
+
+```bash
+sudo apt update
+```
+
+```bash
+sudo apt install -y git
+```
+
+```bash
+rm -rf ~/stop-assholes
+```
+
+```bash
+git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
+```
+
+When asked: username = `tgollogly`, password = **your GitHub token** (not your Windows password).
+
+```bash
+cd ~/stop-assholes
+```
+
+```bash
+chmod +x scripts/wsl-setup-and-test.sh
+```
+
+```bash
+./scripts/wsl-setup-and-test.sh
+```
 
 ### After setup — configure and email Meta
 
