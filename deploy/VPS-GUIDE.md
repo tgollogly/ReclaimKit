@@ -44,14 +44,16 @@ For ReclaimKit itself you do **not** need AI — letters are pre-written templat
 
 ```bash
 apt update && apt install -y git docker.io docker-compose-v2
-git clone https://github.com/tgollogly/stop-assholes.git
-cd stop-assholes
-pip3 install -r requirements.txt   # or use Docker only
+git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
+cd ~/stop-assholes
 cp config.example.yaml config.yaml
 nano config.yaml                   # real email, meta_reports, post_origin: uncertain
+mkdir -p evidence/screenshots output
+python3 main.py init 2>/dev/null || pip3 install -r requirements.txt
 python3 main.py campaign init
 python3 main.py campaign sent --track meta --round 1
 cd deploy && docker compose up -d --build
+./scripts/check-autosave.sh        # verify autosave
 ```
 
 4. Slack webhook in `config.yaml` for daily alerts
@@ -59,9 +61,21 @@ cd deploy && docker compose up -d --build
 
 ## Data persistence (auto-save)
 
-Docker mounts `output/` and `evidence/` from the host. **Campaign state survives reboots.**
+**Enabled by default.** Docker bind-mounts host folders — nothing is stored only inside the container.
 
-See `deploy/README.md` and `docs/COMPLETE-GUIDE.md` section 23.
+| Host path (laptop or VPS) | What is saved |
+|---------------------------|---------------|
+| `~/stop-assholes/config.yaml` | Your details |
+| `~/stop-assholes/output/` | Letters, `campaign/state.json`, cron logs |
+| `~/stop-assholes/evidence/` | Screenshots |
+
+Verify anytime:
+
+```bash
+cd ~/stop-assholes && ./scripts/check-autosave.sh
+```
+
+See `deploy/docker-compose.yml` and `deploy/README.md`.
 
 ## Security
 
