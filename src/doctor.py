@@ -8,17 +8,22 @@ from pathlib import Path
 from typing import Any
 
 from src.config import load_config, validate_config
-from src.escalation_letters import META_ROUNDS, GOOGLE_ROUNDS, ICO_ROUNDS
+from src.escalation_letters import META_ROUNDS, GOOGLE_ROUNDS, ICO_ROUNDS, TRACKS
 from src.letter_context import case_ref
+
+PLACEHOLDER_EMAIL_MARKERS = ("example.com", "your.email", "your.real.email")
 
 
 def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
-    report: dict[str, Any] = {"checks": [], "ok": True}
+    report: dict[str, Any] = {"checks": [], "warnings": [], "ok": True}
 
     def check(name: str, passed: bool, detail: str = "") -> None:
         report["checks"].append({"name": name, "passed": passed, "detail": detail})
         if not passed:
             report["ok"] = False
+
+    def warn(name: str, detail: str) -> None:
+        report["warnings"].append({"name": name, "detail": detail})
 
     check("python_version", sys.version_info >= (3, 10), sys.version.split()[0])
 
@@ -38,7 +43,7 @@ def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
     config: dict[str, Any] | None = None
     try:
         config = load_config(config_path)
-        check("config_load", True)
+        check("config_load", True, config_path)
     except FileNotFoundError as exc:
         check("config_load", False, str(exc))
     except Exception as exc:  # noqa: BLE001
@@ -51,24 +56,36 @@ def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001
             check("config_validate", False, str(exc))
 
+        email = config.get("subject", {}).get("email", "")
+        if any(m in email.lower() for m in PLACEHOLDER_EMAIL_MARKERS):
+            warn("subject_email", f"Replace placeholder email: {email}")
+
+        fb = config.get("case", {}).get("facebook", {})
+        if fb.get("reported_to_meta") and not fb.get("meta_reports"):
+            warn(
+                "meta_reports",
+                "Add case.facebook.meta_reports (see config.example.yaml) so letters cite CS rejection",
+            )
+
         evidence = Path(config["evidence"]["screenshots_dir"])
         images = [
             p for p in evidence.glob("*")
             if p.is_file() and not p.is_symlink() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}
         ]
-        check("evidence_screenshots", len(images) > 0, f"{len(images)} image(s) in {evidence}")
+        if len(images) == 0:
+            warn("evidence_screenshots", f"Add PNG/JPG screenshots to {evidence}")
+        else:
+            check("evidence_screenshots", True, f"{len(images)} image(s)")
 
         out = Path(config["evidence"]["output_dir"])
         check("output_writable", _dir_writable(out), str(out.resolve()))
 
         slack = config.get("automation", {}).get("slack_webhook_url", "")
         placeholder = "YOUR/WEBHOOK"
-        slack_ok = bool(slack) and placeholder not in slack
-        check(
-            "slack_configured",
-            True,
-            "configured" if slack_ok else "optional — set for VPS alerts",
-        )
+        if slack and placeholder not in slack:
+            check("slack_configured", True, "configured")
+        else:
+            warn("slack_configured", "Optional — set automation.slack_webhook_url for VPS alerts")
 
         try:
             letter = META_ROUNDS[1][1](config, {})
@@ -77,15 +94,29 @@ def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
                 "Article 17" in letter and config["case"]["facebook"]["post_url"] in letter,
             )
             check("letter_case_ref", case_ref(config, "META-R1") in letter)
+            check("letter_cs_distinction", "Community Standards" in letter)
         except Exception as exc:  # noqa: BLE001
             check("letter_meta_r1", False, str(exc))
 
-        check("letter_rounds_meta", len(META_ROUNDS) == 6, f"{len(META_ROUNDS)} rounds")
-        check("letter_rounds_google", len(GOOGLE_ROUNDS) == 3)
-        check("letter_rounds_ico", len(ICO_ROUNDS) == 1)
+        for track, rounds in TRACKS.items():
+            for round_num, (_, fn, _, _) in rounds.items():
+                try:
+                    text = fn(config, {})
+                    if len(text) < 200:
+                        raise ValueError("letter too short")
+                except Exception as exc:  # noqa: BLE001
+                    check(f"letter_{track}_r{round_num}", False, str(exc))
+                    break
+            else:
+                check(f"letter_rounds_{track}", True, f"{len(rounds)} rounds")
+                continue
+            check(f"letter_rounds_{track}", False, "generation failed")
 
         state_path = out / "campaign" / "state.json"
-        check("campaign_state", state_path.exists(), "Run: python3 main.py campaign init")
+        if state_path.exists():
+            check("campaign_state", True, str(state_path))
+        else:
+            warn("campaign_state", "Run: python3 main.py campaign init")
 
     return report
 
@@ -108,7 +139,19 @@ def format_doctor_report(report: dict[str, Any]) -> str:
         line = f"  {icon} {item['name']}"
         if item.get("detail") and not item["passed"]:
             line += f" — {item['detail']}"
+        elif item.get("detail") and item["passed"] and item["name"] in {"config_load", "evidence_screenshots", "slack_configured", "campaign_state"}:
+            line += f" — {item['detail']}"
         lines.append(line)
+
+    for item in report.get("warnings", []):
+        lines.append(f"  ! {item['name']} — {item['detail']}")
+
     lines.append("")
-    lines.append("ALL OK" if report["ok"] else "ISSUES FOUND — fix items marked ✗")
+    if report["ok"]:
+        if report.get("warnings"):
+            lines.append("CORE CHECKS OK — address warnings above before sending letters")
+        else:
+            lines.append("ALL OK")
+    else:
+        lines.append("ISSUES FOUND — fix items marked ✗")
     return "\n".join(lines)

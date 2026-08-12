@@ -10,8 +10,10 @@ import yaml
 from src.campaign import init_campaign, load_state, record_refusal, record_sent, save_state
 from src.config import ConfigError, load_config, validate_config
 from src.doctor import run_doctor
-from src.escalation_letters import META_ROUNDS
+from src.escalation_letters import GOOGLE_ROUNDS, META_ROUNDS, TRACKS
 from src.security import allowed_recipient, clamp_text, resolve_under, sanitize_filename
+
+EXAMPLE_CONFIG_PATH = Path("config.example.yaml")
 
 
 SAMPLE_CONFIG = {
@@ -182,3 +184,30 @@ def test_doctor_runs(tmp_config):
     report = run_doctor(str(path))
     assert "checks" in report
     assert isinstance(report["checks"], list)
+
+
+def test_config_example_validates():
+    cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
+    validate_config(cfg)
+    assert cfg["case"]["facebook"].get("meta_reports")
+
+
+def test_all_letter_rounds_from_example_config():
+    cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
+    for track, rounds in TRACKS.items():
+        for round_num, (_, fn, _, _) in rounds.items():
+            text = fn(cfg, {})
+            assert len(text) > 200, f"{track} r{round_num} too short"
+            if track == "meta":
+                assert "Article 17" in text or "GDPR" in text
+            elif track == "google":
+                assert "Google" in text or "Defamation" in text
+            else:
+                assert "ICO" in text or "Article 17" in text
+
+
+def test_search_queries_url_encoded():
+    cfg = yaml.safe_load(EXAMPLE_CONFIG_PATH.read_text(encoding="utf-8"))
+    text = GOOGLE_ROUNDS[1][1](cfg, {})
+    assert "search?q=" in text
+    assert "%22Thomas" in text or "Thomas+Gollogly" in text

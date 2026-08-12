@@ -72,7 +72,10 @@ def _check_campaign_escalation(config: dict[str, Any], state: dict[str, Any]) ->
     if state.get("removed"):
         return []
 
-    meta_days = auto_cfg.get("meta_escalation_days", 7)
+    meta_days = auto_cfg.get(
+        "meta_escalation_days",
+        config.get("campaign", {}).get("meta_reminder_days", 7),
+    )
     days = _days_since_sent(state, "meta")
     if days is None:
         return []

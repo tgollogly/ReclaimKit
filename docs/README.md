@@ -24,6 +24,15 @@ After editing `COMPLETE-GUIDE.md`:
 ./scripts/build-guide-pdf.sh
 ```
 
+## Full audit
+
+```bash
+chmod +x scripts/audit.sh
+./scripts/audit.sh
+```
+
+Runs pytest, config validation, all letter generation, doctor, daemon dry-run, and PDF build.
+
 Requires `pandoc` and `wkhtmltopdf` (`sudo apt-get install pandoc wkhtmltopdf` on Debian/Ubuntu).
 
 ## Other docs
