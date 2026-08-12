@@ -34,11 +34,17 @@ def run_doctor(config_path: str = "config.yaml") -> dict[str, Any]:
         except ImportError as exc:
             check(f"import_{mod}", False, str(exc))
 
-    try:
-        import duckduckgo_search  # noqa: F401
-        check("import_duckduckgo_search", True)
-    except ImportError:
-        check("import_duckduckgo_search", False, "pip install duckduckgo-search")
+    search_ok = False
+    for mod_name in ("ddgs", "duckduckgo_search"):
+        try:
+            importlib.import_module(mod_name)
+            check("import_ddgs", True, mod_name)
+            search_ok = True
+            break
+        except ImportError:
+            continue
+    if not search_ok:
+        check("import_ddgs", False, "pip install ddgs")
 
     config: dict[str, Any] | None = None
     try:

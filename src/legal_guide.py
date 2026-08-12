@@ -19,7 +19,7 @@ you have exhausted Meta's GDPR process — you may lose access to report links.
 STEP 1 — SUBMIT REMOVAL REQUESTS (before closing account)
 ---------------------------------------------------------
   □ Run: python3 main.py letters
-  □ Email privacy@facebook.com with 01_meta_gdpr_article17.txt
+  □ Email privacy@facebook.com with meta_r1_erasure_initial.txt
   □ Submit escalation: facebook.com/help/contact/571927962827151
   □ Keep screenshots in evidence/screenshots/ (already have these)
   □ Save Meta's reply emails — you need proof if you escalate to your data protection authority
@@ -71,8 +71,7 @@ WHAT YOU ARE NOT DOING (by choice — that's fine)
   ✗ Confronting commenters
 
 Support without police:
-  your data protection authority (data protection): your-regulator-url | 0303 123 1113
-  Citizens Advice NI: 0800 915 4605
+  your data protection authority: see jurisdiction.regulator_url in config.yaml
 """
 
 

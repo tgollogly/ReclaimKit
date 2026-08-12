@@ -2,7 +2,7 @@
 
 Run ReclaimKit daily monitoring on a small VPS (~£4–6/month). Same server can host other Docker tools, scripts, and self-hosted AI.
 
-## Recommended providers (UK/EU, good for NI users)
+## Recommended providers (EU/US — pick a region near you)
 
 | Provider | Price | Specs (typical) | Best for |
 |----------|-------|-----------------|----------|

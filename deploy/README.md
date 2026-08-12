@@ -29,7 +29,7 @@ This is the same limitation Removify has — they also submit forms and emails, 
 ## Quick start (Docker on VPS)
 
 ```bash
-git clone https://github.com/tgollogly/reclaimkit.git
+git clone https://github.com/tgollogly/ReclaimKit.git
 cd reclaimkit
 pip install -r requirements.txt
 python3 main.py init

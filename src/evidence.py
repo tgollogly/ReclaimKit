@@ -124,7 +124,7 @@ def _evidence_summary(manifest: dict[str, Any], config: dict[str, Any]) -> str:
             "",
             "NEXT STEPS:",
             "  1. Do not edit these files after hashing.",
-            "  2. Provide this folder to your solicitor or PSNI if reporting.",
+            "  2. Provide this folder to your solicitor or local authorities if reporting.",
             "  3. Keep originals on the device where you took the screenshots.",
         ]
     )

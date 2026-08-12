@@ -7,9 +7,12 @@ from typing import Any
 from urllib.parse import urlparse
 
 try:
-    from duckduckgo_search import DDGS
+    from ddgs import DDGS
 except ImportError:
-    DDGS = None  # type: ignore[misc, assignment]
+    try:
+        from duckduckgo_search import DDGS  # legacy package name
+    except ImportError:
+        DDGS = None  # type: ignore[misc, assignment]
 
 
 HARMFUL_KEYWORDS_BASE = [

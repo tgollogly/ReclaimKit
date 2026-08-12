@@ -138,7 +138,7 @@ docker compose run --rm reclaimkit python3 main.py campaign init
 
 1. Open letter (from Windows Explorer or WSL):
 
-   `~/reclaimkit/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`
+   `~/reclaimkit/output/campaign-package-.../round-01-meta/meta_r1_erasure_initial.txt`
 
 2. Email **privacy@facebook.com** with screenshots attached
 
