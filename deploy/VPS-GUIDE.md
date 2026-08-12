@@ -1,19 +1,19 @@
 # Cheap VPS guide — ReclaimKit + other automations
 
-Run ReclaimKit daily monitoring on a small VPS (~£4–6/month). Same server can host other Docker tools, scripts, and self-hosted AI.
+Run ReclaimKit daily monitoring on a small VPS (~$5–6/month). Same server can host other Docker tools, scripts, and self-hosted AI.
 
-## Recommended providers (UK/EU, good for NI users)
+## Recommended providers (pick a region close to you)
 
 | Provider | Price | Specs (typical) | Best for |
 |----------|-------|-----------------|----------|
-| **[Hetzner Cloud](https://www.hetzner.com/cloud)** | **~£4.50/mo** (CX22) | 2 vCPU, 4 GB RAM, 40 GB SSD, EU datacentres | **Best value** — Docker, cron, multiple containers |
+| **[Hetzner Cloud](https://www.hetzner.com/cloud)** | **~$5/mo** (CX22) | 2 vCPU, 4 GB RAM, 40 GB SSD, EU datacentres | **Best value** — Docker, cron, multiple containers |
 | **[DigitalOcean](https://www.digitalocean.com/)** | **~$6/mo** | 1 vCPU, 1 GB RAM (basic droplet) | Simple UI, good docs |
 | **[Vultr](https://www.vultr.com/)** | **~$6/mo** | 1 vCPU, 1 GB RAM | Many regions |
-| **[Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/)** | **£0** (always free) | Up to 4 ARM cores, 24 GB RAM (if approved) | Free but signup/setup can be awkward |
+| **[Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/)** | **$0** (always free) | Up to 4 ARM cores, 24 GB RAM (if approved) | Free but signup/setup can be awkward |
 
 **Recommendation:** **Hetzner CX22** (~€4.59/month) — enough RAM for ReclaimKit + Docker Compose stack + lightweight automation.
 
-## What fits on one £5 VPS
+## What fits on one ~$5 VPS
 
 | Service | RAM | Notes |
 |---------|-----|-------|
@@ -46,10 +46,10 @@ For ReclaimKit itself you do **not** need AI — letters are pre-written templat
 apt update && apt install -y git docker.io docker-compose-v2
 git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
 cd ~/reclaimkit
-cp config.example.yaml config.yaml
+pip3 install -r requirements.txt
+python3 main.py init
 nano config.yaml                   # real email, meta_reports, post_origin: uncertain
 mkdir -p evidence/screenshots output
-python3 main.py init 2>/dev/null || pip3 install -r requirements.txt
 python3 main.py campaign init
 python3 main.py campaign sent --track meta --round 1
 cd deploy && docker compose up -d --build
@@ -88,9 +88,9 @@ See `deploy/docker-compose.yml` and `deploy/README.md`.
 
 | Item | Monthly |
 |------|---------|
-| Hetzner CX22 | ~£4.50 |
-| ReclaimKit software | £0 |
+| Hetzner CX22 | ~$5 |
+| ReclaimKit software | $0 |
 | SerpAPI (optional image search) | $0–50 |
-| **Total minimum** | **~£5** |
+| **Total minimum** | **~$5** |
 
-Compare to Removify: **£400–£2,000 per item**.
+Compare to Removify: **$400–$2,000 per item**.

@@ -43,7 +43,7 @@ ReclaimKit runs in four phases:
 1. Install **Docker Desktop** → **Running**
 2. Install **Ubuntu**: PowerShell Admin → `wsl --install -d Ubuntu`
 3. Docker Desktop → **Settings → WSL Integration → Ubuntu ON**
-4. Open **Ubuntu** (`useradmin@DESKTOP:~$` — not `PS C:\`)
+4. Open **Ubuntu** (`username@PC:~$` — not `PS C:\`)
 
 ```bash
 sudo apt update && sudo apt install -y git
@@ -64,8 +64,8 @@ wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && git clone h
 ### Linux / Mac
 
 ```bash
-git clone https://github.com/tgollogly/ReclaimKit.git
-cd ReclaimKit
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
+cd ~/reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 python3 main.py doctor

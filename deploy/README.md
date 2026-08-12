@@ -29,8 +29,8 @@ This is the same limitation Removify has — they also submit forms and emails, 
 ## Quick start (Docker on VPS)
 
 ```bash
-git clone https://github.com/tgollogly/reclaimkit.git
-cd reclaimkit
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
+cd ~/reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 # Edit config.yaml — email, address, meta_reports, Slack webhook
@@ -160,6 +160,7 @@ python3 main.py campaign status
 
 ## Security
 
-- Never commit `config.yaml` (contains Slack webhook + SMTP passwords)
+- Never commit `config.yaml` (contains personal details and Slack webhook URL)
+- Put SMTP passwords in `.env`, not `config.yaml` — see docs/AUTO-EMAIL-SETUP.md
 - Mount `config.yaml` read-only in Docker
 - VPS should only be accessible to you (SSH keys, firewall)
