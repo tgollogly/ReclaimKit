@@ -1,0 +1,12 @@
+services:
+  stop-assholes:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    volumes:
+      - ../config.yaml:/app/config.yaml:ro
+      - ../evidence:/app/evidence
+      - ../output:/app/output
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/London

@@ -1,49 +1,95 @@
-# Stop Assholes — Online Harassment Response Toolkit (UK/NI)
+# Stop Assholes — Multi-Round Removal Campaign (UK/NI)
 
-Removal-focused toolkit: **get the post taken down → delist from Google → close Facebook**. No police required.
+Automated **escalation campaign** to remove harmful Facebook content and Google search results. Generates professionally worded legal letters across **multiple rounds** — each refusal or silence triggers the next, stronger letter until removal or ICO enforcement.
 
-## What this does
+**No solicitor. No police.**
 
-| Command | Purpose |
-|---------|---------|
-| `python3 main.py init` | Create `config.yaml` and evidence folders |
-| `python3 main.py letters` | Generate Meta GDPR + Google removal letter drafts |
-| `python3 main.py evidence` | Hash and package screenshots (for ICO/Meta if needed) |
-| `python3 main.py monitor` | Scan public search for indexed harmful URLs |
-| `python3 main.py guide` | Removal-only action guide |
-| `python3 main.py close` | Checklist to close Facebook after removal |
-| `python3 main.py all` | Run the full workflow |
-
-## Quick start
+## How it works
 
 ```bash
 pip install -r requirements.txt
-python3 main.py init
-# Edit config.yaml — email, address, Facebook post URL
-# Copy screenshots into evidence/screenshots/
-python3 main.py all
-python3 main.py close   # read before deleting Facebook
+python3 main.py init          # create config.yaml
+# Edit config.yaml — your real email, address, phone
+# Add screenshots to evidence/screenshots/
+
+python3 main.py campaign init # round 1: Meta GDPR + Google
+# → Send letters from output/campaign-package-*/
+
+python3 main.py campaign sent --track meta --round 1
+
+# 7 days, no removal?
+python3 main.py campaign no-response --track meta
+
+# Meta explicitly refused?
+python3 main.py campaign refused --track meta --reason "They said..."
+
+# Check progress anytime
+python3 main.py campaign status
+
+# Content gone?
+python3 main.py campaign success
+python3 main.py close
 ```
 
-## Your plan (no police)
+## Escalation rounds (automatic)
 
-1. **Submit Meta GDPR request today** — email `privacy@facebook.com` with generated letter
-2. **Escalate if ignored** — https://www.facebook.com/help/contact/571927962827151
-3. **Google delisting** — if anything shows in search (`python3 main.py monitor`)
-4. **Wait up to 1 month** for Meta's GDPR response
-5. **If Meta refuses** → ICO complaint (free, no police): https://ico.org.uk/make-a-complaint/
-6. **Confirm post is gone** → close Facebook (`python3 main.py close`)
+### Meta track (6 rounds)
 
-**Important:** Deleting Facebook does **not** remove the group post. Submit the GDPR request **before** you close your account, and keep your screenshots locally.
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | UK GDPR Article 17 — formal erasure request | Day 0 — **start here** |
+| 2 | Article 12(3) deadline reminder | 7 days, no response |
+| 3 | Trust & Safety + Community Standards | 14 days |
+| 4 | Formal rebuttal of refusal | Meta refuses |
+| 5 | Final notice before ICO | 28 days |
+| 6 | Post-ICO continued non-compliance | After ICO complaint |
 
-## What this cannot do
+### Google track (3 rounds)
 
-No software can instantly wipe content from the internet. Meta has up to **1 month** to respond to GDPR requests. Google only hides URLs from search — it does not delete Facebook posts.
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | Defamation delisting (UK) | Day 0 (parallel with Meta R1) |
+| 2 | Personal info / doxxing form | Day 7 |
+| 3 | Resubmission with Meta/ICO history | Day 30 |
 
-## If Meta refuses (still no police)
+### ICO track (1 round)
 
-Use the **ICO** (Information Commissioner's Office) — 0303 123 1113 — with your evidence pack and proof you emailed Meta. That is the civil data-protection route, not a criminal one.
+| Round | Letter | When |
+|-------|--------|------|
+| 1 | Full ICO complaint against Meta | After Meta round 4+ or 30 days |
+
+Each letter includes a **case reference** (e.g. `TG-ER-THOMAS-GOLLO-META-R1`) — quote it in every email.
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `campaign init` | Start campaign, generate round 1 |
+| `campaign sent --track meta --round N` | Record that you sent round N |
+| `campaign refused --track meta --reason "..."` | Record refusal → auto-generates next round |
+| `campaign no-response --track meta` | No reply in 7 days → next round |
+| `campaign next` | Generate next escalation package |
+| `campaign status` | Dashboard |
+| `campaign success` | Mark removed |
+| `evidence` | SHA-256 evidence pack for ICO |
+| `monitor` | Find Google URLs to delist |
+| `close` | Facebook closure checklist |
+
+## Your post (pre-configured)
+
+**URL:** https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/
+
+## What success looks like
+
+1. Meta deletes post + comments (source removal)
+2. Google delists any indexed URLs (search removal)
+3. You close Facebook (`python3 main.py close`)
+4. Monthly `monitor` for 3 months to catch re-indexing
+
+## Honest limits
+
+Software cannot force instant deletion. This tool matches what Removify and similar firms do — **formal requests, resubmissions, escalating legal pressure** — except you run it yourself for free. Persistence across rounds is what wins.
 
 ---
 
-*Information and templates only — not legal advice.*
+*Templates only — not legal advice.*

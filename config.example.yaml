@@ -11,12 +11,10 @@ subject:
   country: "United Kingdom"
 
 preferences:
-  # Removal-only path: no police, close Facebook after content is removed.
   no_police: true
   closing_facebook_after_removal: true
 
 case:
-  # Brief factual statement for legal letters (keep neutral and factual).
   summary: >
     False and damaging allegations were posted about me in a Facebook group
     alongside my photograph without consent. I deny all allegations and am
@@ -26,7 +24,6 @@ case:
     group_name: "AreWeDatingTheSameGuy? Northern Ireland"
     post_date: "2025-06-05"
     post_caption: "Any red flags Thomas gollogly"
-    # Direct link to the post (Share > Copy link).
     post_url: "https://www.facebook.com/groups/1054539240086174/posts/1252856073587822/"
     reported_to_meta: true
     meta_report_reference: ""
@@ -52,7 +49,6 @@ case:
       posted_approx: "8 weeks before screenshot"
 
 evidence:
-  # Folder containing your screenshots (PNG/JPG).
   screenshots_dir: "./evidence/screenshots"
   output_dir: "./output"
 
@@ -61,5 +57,29 @@ monitor:
     - '"Thomas Gollogly"'
     - '"Thomas gollogly" Facebook'
     - '"Thomas gollogly" "AreWeDatingTheSameGuy"'
-  # Region for DuckDuckGo (uk-en for UK-focused results).
   region: "uk-en"
+
+automation:
+  enabled: true
+  auto_start_campaign: true
+  auto_escalate: true
+  meta_escalation_days: 7
+  auto_send_emails: false
+  slack_webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+  smtp:
+    enabled: false
+    host: "smtp.gmail.com"
+    port: 587
+    use_tls: true
+    username: "your.email@gmail.com"
+    password: "app-specific-password"
+    from_email: "your.email@gmail.com"
+  image_search:
+    provider: "none"
+    serpapi_key: ""
+    tineye_api_key: ""
+    reference_image: ""
+
+campaign:
+  meta_reminder_days: 7
+  ico_trigger_after_meta_round: 4

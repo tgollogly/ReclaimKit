@@ -1,0 +1,2 @@
+# Daily at 08:00 UTC — adjust as needed
+0 8 * * * cd /app && /usr/local/bin/python3 main.py daemon once >> /app/output/cron.log 2>&1

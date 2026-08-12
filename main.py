@@ -23,6 +23,7 @@ from src.evidence import build_evidence_pack
 from src.legal_guide import print_close_facebook_guide, print_legal_guide
 from src.monitor import write_monitor_report
 from src.osint import write_osint_report
+from src.automation import run_daily_automation
 from src.takedown import write_takedown_letters
 
 
@@ -185,6 +186,17 @@ def cmd_campaign_success(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_daemon_once(args: argparse.Namespace) -> int:
+    config = load_config(args.config)
+    if not config.get("automation", {}).get("enabled", True):
+        print("Automation disabled in config.yaml (automation.enabled: false)", file=sys.stderr)
+        return 1
+    summary = run_daily_automation(config, dry_run=args.dry_run)
+    import json
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
 def cmd_all(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     print("=== Step 1: Evidence pack ===")
@@ -234,6 +246,11 @@ def main() -> int:
     sub.add_parser("close", help="Checklist to close Facebook after removal")
     sub.add_parser("all", help="Evidence + campaign init + osint + monitor")
 
+    daemon = sub.add_parser("daemon", help="VPS daily automation (monitor + Slack + escalate)")
+    daemon_sub = daemon.add_subparsers(dest="daemon_cmd", required=True)
+    p_once = daemon_sub.add_parser("once", help="Run one daily automation cycle")
+    p_once.add_argument("--dry-run", action="store_true", help="Scan only, no emails/state writes")
+
     campaign = sub.add_parser("campaign", help="Multi-round escalation campaign")
     campaign_sub = campaign.add_subparsers(dest="campaign_cmd", required=True)
 
@@ -261,6 +278,11 @@ def main() -> int:
     p_ok.add_argument("--note", default="")
 
     args = parser.parse_args()
+
+    if args.command == "daemon":
+        if args.daemon_cmd == "once":
+            return cmd_daemon_once(args)
+        return 1
 
     if args.command == "campaign":
         campaign_handlers = {
