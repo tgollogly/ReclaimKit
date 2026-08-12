@@ -18,7 +18,7 @@
 ## Table of contents
 
 1. [Will this work?](#1-will-this-work)
-2. [Your situation at a glance](#2-your-situation-at-a-glance)
+2. [Example case](#2-example-case-fill-in-your-own-details-in-configyaml)
 3. [What you need before you start](#3-what-you-need-before-you-start)
 4. [Facebook login — what matters](#4-facebook-login--what-matters)
 5. [Install ReclaimKit](#5-install-reclaimkit)
@@ -35,7 +35,7 @@
 16. [Costs and comparison to paid services](#16-costs-and-comparison-to-paid-services)
 17. [FAQ](#17-faq)
 18. [Troubleshooting](#18-troubleshooting)
-19. [Support contacts (no police required)](#19-support-contacts-no-police-required)
+19. [Support contacts](#19-support-contacts)
 20. [Checklist — print and tick off](#20-checklist--print-and-tick-off)
 21. [Community Standards vs GDPR](#21-community-standards-vs-gdpr)
 22. [Meta rejected your report — what now](#22-meta-rejected-your-report--what-now)
@@ -182,8 +182,8 @@ You are **currently logged into Facebook**. That is useful now. You plan to **cl
 ### Option A — Local (quickest to start)
 
 ```bash
-git clone https://github.com/tgollogly/ReclaimKit.git
-cd reclaimkit
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
+cd ~/reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 ```
@@ -262,7 +262,7 @@ case:
 ```yaml
 preferences:
   no_police: true
-  closing_facebook_after_removal: true
+  closing_platform_after_removal: true
 ```
 
 ### Evidence folders
@@ -629,8 +629,8 @@ Open Ubuntu (WSL terminal):
 
 ```bash
 sudo apt update && sudo apt install -y python3 python3-pip git
-git clone https://github.com/tgollogly/ReclaimKit.git
-cd reclaimkit
+git clone https://github.com/tgollogly/ReclaimKit.git ~/reclaimkit
+cd ~/reclaimkit
 pip install -r requirements.txt
 python3 main.py init
 # Edit config.yaml with: nano config.yaml

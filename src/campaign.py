@@ -23,6 +23,10 @@ def _today_short() -> str:
     return datetime.now(timezone.utc).strftime("%d %B %Y")
 
 
+def _regulator_trigger(config: dict[str, Any]) -> int:
+    return int(config.get("campaign", {}).get("regulator_trigger_after_meta_round", 4))
+
+
 def load_state(path: Path | None = None) -> dict[str, Any]:
     state_path = path or DEFAULT_STATE_PATH
     if not state_path.exists():
@@ -288,6 +292,9 @@ def generate_next_package(
     force_round: int | None = None,
 ) -> tuple[Path, list[str]]:
     """Generate letter package for the next required round(s)."""
+    if track == "ico":
+        track = "regulator"
+
     out = Path(config["evidence"]["output_dir"])
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     package_dir = out / f"campaign-package-{timestamp}"
@@ -320,9 +327,9 @@ def generate_next_package(
         elif google_r < state["tracks"]["google"]["max_round"] and meta_r >= 2:
             _gen("google", google_r + 1)
 
-        if reg_r["round"] == 0 and meta_r >= 4:
+        if reg_r["round"] == 0 and meta_r >= _regulator_trigger(config):
             _gen("regulator", 1)
-        elif reg_r["round"] < reg_r["max_round"] and meta_r >= 5:
+        elif reg_r["round"] < reg_r["max_round"] and meta_r >= _regulator_trigger(config) + 1:
             _gen("regulator", reg_r["round"] + 1)
 
     if not generated:

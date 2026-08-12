@@ -20,6 +20,7 @@ jurisdiction:
   google_delisting_region: "Your country"
 
 preferences:
+  no_police: true
   closing_platform_after_removal: false
 
 case:
