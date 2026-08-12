@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>UK/NI Reputation Reclaim Toolkit</strong><br/>
-  Multi-round GDPR campaigns · Daily monitoring · Slack alerts · VPS-ready
+  Multi-round GDPR campaigns · Daily monitoring · Docker automation
 </p>
 
 <p align="center">
@@ -18,169 +18,333 @@
 
 ---
 
-> **ReclaimKit** helps you fight harmful Facebook posts and Google search results using the same legal channels reputation firms use — **GDPR erasure, defamation delisting, ICO complaints** — without paying **£400–£2,000 per case**.
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### 🟢 What ReclaimKit does
-
-- **6-round Meta escalation** (GDPR → ICO)
-- **3-round Google delisting** drafts
-- **Daily web + image monitoring**
-- **Slack notifications** on new hits
-- **VPS / Docker** deployment
-- **Optional auto-email** to Meta
-
-</td>
-<td width="50%" valign="top">
-
-### 🔴 What no software can do
-
-- Force-delete Facebook posts instantly
-- Auto-submit Google web forms (no API)
-- Scrape private groups
-- Guarantee removal — platforms decide
-
-</td>
-</tr>
-</table>
+> Remove harmful Facebook posts and Google results using **UK GDPR Article 17** — the same emails and forms reputation firms charge **£400–£2,000** to send.
 
 ---
 
-## 💷 What removal services charge
+## How to test and deploy
 
-| Service | Typical cost | Model |
-|---------|-------------|--------|
-| **Removify** | **£400–£2,000** (~$500–$2,500) per item | No win, no fee + deposit |
-| **Erase.com** | **£800–£2,000+** per item | Custom quote |
-| **Guaranteed Removals** | **£600–£1,500** per item | Pay on success |
-| **NI solicitor** | **£500–£5,000+** | Hourly / letter before action |
-| **ReclaimKit** | **£0** software · **~£5/mo** optional VPS | You run the same process |
+ReclaimKit has **four phases**. Do them in order:
 
-Paid services submit the **same forms and emails** ReclaimKit generates — their value is persistence and wording. ReclaimKit automates that for you.
+| Phase | What you do | Sends emails? | Time |
+|-------|-------------|---------------|------|
+| **1. Test** | Run health checks + dry-run | **No** — safe | ~5 min |
+| **2. Configure** | Edit `config.yaml`, add screenshots | No | ~10 min |
+| **3. Deploy** | Start Docker (daily automation) | Only if you enable auto-email | ~2 min |
+| **4. Go live** | Email Meta yourself, record the send | **Yes** — you send Round 1 | ~5 min |
 
-Sources: [Removify FAQ](https://removify.com/faq/how-much-does-it-cost-to-remove-a-google-review/), [industry comparison](https://www.truereview.co/post/removify-vs-erase-vs-guaranteed-removals-honest-comparison).
+**Doctor** = one-off health check (`python3 main.py doctor`).  
+**Docker** = background service that runs the daily job at 08:00 UTC. Different things.
 
 ---
 
-## 📖 Full documentation
+## Pick your platform
 
-| Guide | Links |
-|-------|-------|
-| **Quick Start** | [MD](docs/QUICK-START.md) · [PDF](docs/QUICK-START.pdf) |
-| **Complete Guide** | [MD](docs/COMPLETE-GUIDE.md) · [PDF](docs/COMPLETE-GUIDE.pdf) |
-| **Auto-email (free Gmail)** | [MD](docs/AUTO-EMAIL-SETUP.md) · [PDF](docs/AUTO-EMAIL-SETUP.pdf) |
-| **VPS setup** | [MD](deploy/VPS-GUIDE.md) · [PDF](docs/VPS-GUIDE.pdf) |
+| You are on… | Follow this section |
+|-------------|---------------------|
+| **Windows 11** (recommended) | [Windows — WSL + Docker](#windows-11--wsl--docker) |
+| Linux or Mac | [Linux / Mac](#linux--mac) |
+| Cloud VPS (~£5/mo, PC can be off) | [VPS](#vps--cloud-server) |
+
+**Windows:** use **Ubuntu in WSL + Docker Desktop**, not PowerShell alone. PowerShell is only to install WSL (`wsl --install`) and start Docker Desktop.
+
+---
+
+## Windows 11 — WSL + Docker
+
+### Prerequisites (one time, on Windows)
+
+1. **WSL2** — PowerShell as Admin: `wsl --install` → restart  
+2. **Docker Desktop** — install, enable **WSL integration** for Ubuntu  
+3. Open **Ubuntu** from the Start menu (or type `wsl` in PowerShell)
+
+Full walkthrough: [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) · [PDF](docs/WINDOWS-WSL-DOCKER.pdf)
+
+---
+
+### Phase 1 — Test (safe, no emails)
+
+Paste in the **Ubuntu/WSL** terminal:
 
 ```bash
-./scripts/audit.sh          # verify codebase
-./scripts/build-all-pdfs.sh # rebuild all PDFs
+sudo apt update && sudo apt install -y git
+git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes
+cd ~/stop-assholes
+chmod +x scripts/wsl-setup-and-test.sh
+./scripts/wsl-setup-and-test.sh
+```
+
+The script automatically:
+
+1. Builds the Docker image  
+2. Runs `doctor` (health check)  
+3. Runs `campaign init` (generates sample Round 1 letters)  
+4. Runs `daemon once --dry-run` (**safe test — nothing is emailed**)  
+5. Starts the Docker container (Phase 3 deploy)
+
+**Success = terminal shows `SETUP COMPLETE`.**
+
+Verify manually if you want:
+
+```bash
+cd ~/stop-assholes/deploy
+
+docker compose run --rm stop-assholes python3 main.py doctor
+docker compose run --rm stop-assholes python3 main.py daemon once --dry-run
+docker compose ps                    # should show container "Up"
+ls ../output/campaign-package-*/round-01-meta/
+```
+
+| Check | Pass if… |
+|-------|----------|
+| `doctor` | Core checks pass (missing screenshots = warning only at this stage) |
+| `daemon once --dry-run` | JSON output, no errors |
+| `docker compose ps` | Container status **Up** |
+| `output/.../meta_r1_gdpr_initial.txt` | File exists |
+
+---
+
+### Phase 2 — Configure (before emailing Meta)
+
+```bash
+nano ~/stop-assholes/config.yaml
+```
+
+Fill in your real **email**, **address**, and **phone**. Keep `post_origin: uncertain` if you are not sure who posted the caption.
+
+Copy screenshots into `~/stop-assholes/evidence/screenshots/` (Meta rejection, post screenshot, etc.). From Windows Explorer:
+
+```
+\\wsl$\Ubuntu\home\YOUR_USERNAME\stop-assholes\evidence\screenshots\
+```
+
+Regenerate letters after editing config:
+
+```bash
+cd ~/stop-assholes/deploy
+docker compose run --rm stop-assholes python3 main.py campaign init
+docker compose run --rm stop-assholes python3 main.py doctor
 ```
 
 ---
 
-## ⚡ Quick start
+### Phase 3 — Deploy (daily automation)
+
+The setup script already started this. To manage the container:
+
+```bash
+cd ~/stop-assholes/deploy
+docker compose up -d          # start (if stopped)
+docker compose logs -f        # watch logs
+docker compose down           # stop automation
+cat ../output/cron.log        # cron history
+```
+
+**Your data persists on disk** at `~/stop-assholes/output/` and `~/stop-assholes/evidence/` — container restarts do not wipe campaign state or letters.
+
+What runs automatically every day at **08:00 UTC**:
+
+- Web search for your name  
+- Slack alerts (if configured)  
+- Generate next escalation letter after 7 days of no Meta reply  
+- Optional: SMTP email to Meta ([AUTO-EMAIL-SETUP.md](docs/AUTO-EMAIL-SETUP.md))
+
+---
+
+### Phase 4 — Go live (email Meta)
+
+1. Open the letter:  
+   `~/stop-assholes/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`  
+2. Email **privacy@facebook.com** — attach your screenshots  
+3. Record that you sent it:
+
+```bash
+cd ~/stop-assholes/deploy
+docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1
+```
+
+Check progress anytime:
+
+```bash
+docker compose run --rm stop-assholes python3 main.py campaign status
+```
+
+---
+
+## Linux / Mac
+
+### Phase 1 — Test
 
 ```bash
 git clone https://github.com/tgollogly/stop-assholes.git
 cd stop-assholes
 pip install -r requirements.txt
 python3 main.py init
+python3 main.py doctor
+python3 main.py daemon once --dry-run    # safe — no emails
+python3 -m pytest tests/ -v              # 20 automated tests
 ```
 
-1. Edit **`config.yaml`** — your email, address, Slack webhook  
-2. Add screenshots to **`evidence/screenshots/`**  
-3. Run **`python3 main.py campaign init`**  
-4. Email Meta using **`output/campaign-package-.../round-01-meta/`**  
-5. Track: **`python3 main.py campaign sent --track meta --round 1`**
+### Phase 2 — Configure
+
+Edit `config.yaml` (email, address, `post_origin: uncertain` if needed). Add screenshots to `evidence/screenshots/`.
+
+```bash
+python3 main.py campaign init
+python3 main.py doctor
+```
+
+### Phase 3 — Deploy (Docker)
+
+```bash
+cd deploy
+docker compose up -d --build
+docker compose ps
+docker compose logs -f
+```
+
+Or without Docker — cron on your machine:
+
+```bash
+crontab -e
+# Add: 0 8 * * * cd /path/to/stop-assholes && python3 main.py daemon once >> output/cron.log 2>&1
+```
+
+### Phase 4 — Go live
+
+1. Email Meta using the letter in `output/campaign-package-.../round-01-meta/`  
+2. `python3 main.py campaign sent --track meta --round 1`
 
 ---
 
-## 📋 Campaign rounds
+## VPS — cloud server
 
-<table>
-<thead>
-<tr><th>Track</th><th>Rounds</th><th>Trigger</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>Meta</strong></td><td>6</td><td>GDPR → reminder → Trust & Safety → rebuttal → ICO notice → post-ICO</td></tr>
-<tr><td><strong>Google</strong></td><td>3</td><td>Defamation → personal info → resubmit with case history</td></tr>
-<tr><td><strong>ICO</strong></td><td>1</td><td>After Meta round 4+ or 30 days without removal</td></tr>
-</tbody>
-</table>
+Use a VPS (~£4.50/mo on Hetzner) when you want automation running 24/7 while your PC is off.
 
-Each letter includes a case reference (e.g. `TG-ER-THOMAS-GOLLO-META-R1`).
+Full guide: [deploy/VPS-GUIDE.md](deploy/VPS-GUIDE.md) · [deploy/README.md](deploy/README.md)
+
+```bash
+# SSH into your VPS (Ubuntu)
+git clone https://github.com/tgollogly/stop-assholes.git
+cd stop-assholes
+pip install -r requirements.txt
+
+# Phase 2 — configure
+cp config.example.yaml config.yaml && nano config.yaml
+mkdir -p evidence/screenshots output
+# upload screenshots via scp or sftp
+
+# Phase 1 — test
+python3 main.py init
+python3 main.py campaign init
+python3 main.py doctor
+python3 main.py daemon once --dry-run
+
+# Phase 3 — deploy
+cd deploy && docker compose up -d --build
+docker compose ps
+
+# Phase 4 — go live (email Meta from your laptop or the VPS)
+python3 main.py campaign sent --track meta --round 1
+```
+
+Optional: copy `.env.example` to `.env` for Gmail auto-send — see [docs/AUTO-EMAIL-SETUP.md](docs/AUTO-EMAIL-SETUP.md).
 
 ---
 
-## 🖥️ Commands
+## What runs automatically vs what you do
+
+| Automated (Docker daily cron) | You do manually |
+|------------------------------|-----------------|
+| Web search for your name | **Email Meta Round 1** (first time) |
+| Slack alerts on new URLs | Google delisting web forms (~2 min each) |
+| Generate next letter after 7 days | Read Meta's reply emails |
+| Optional: SMTP email to Meta | Send ID if Meta asks |
+
+When Meta replies: run `campaign success`, `campaign refused`, or wait for 7-day auto-escalation. ReclaimKit does **not** read your inbox.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `python3: command not found` on Windows | Use **WSL/Ubuntu**, not PowerShell. In PowerShell use `python` (no `3`). |
+| `Docker daemon not running` | Start **Docker Desktop** on Windows; wait until it says Running. |
+| `doctor` warns about screenshots | Add PNG/JPG files to `evidence/screenshots/`, then re-run `campaign init`. |
+| Letters have placeholder text | Edit `config.yaml` with real details, then `campaign init` again. |
+| Container not running | `cd deploy && docker compose up -d` |
+| Want to re-test safely | `docker compose run --rm stop-assholes python3 main.py daemon once --dry-run` |
+| Full repo check | `./scripts/audit.sh` (20 tests + doctor + PDFs) |
+
+---
+
+## Commands cheat sheet
+
+Run locally as `python3 main.py <command>`, or in Docker:
+
+```bash
+cd deploy
+docker compose run --rm stop-assholes python3 main.py <command>
+```
 
 | Command | Purpose |
 |---------|---------|
+| `doctor` | Health check — run first |
+| `campaign init` | Generate Round 1 letters |
+| `campaign sent --track meta --round 1` | Record that you emailed Meta |
+| `campaign status` | Show progress |
+| `campaign no-response --track meta` | 7 days silence → next round |
+| `campaign refused --track meta --reason "..."` | Refusal → rebuttal |
+| `campaign success` | Mark content removed |
+| `daemon once --dry-run` | **Safe test** — no emails sent |
+| `daemon once` | Run daily job now (live) |
+| `monitor` | Scan Google for your name |
 | `init` | Create `config.yaml` and evidence folders |
 | `evidence` | Build hashed evidence pack |
 | `letters` | Generate standalone takedown letters |
-| `campaign init` | Start campaign + Round 1 package |
-| `campaign status` | Show progress dashboard |
-| `campaign sent --track meta --round N` | Record submission |
-| `campaign no-response --track meta` | 7-day silence → next round |
-| `campaign refused --track meta --reason "..."` | Refusal → rebuttal |
-| `campaign next --track meta --round N` | Generate specific round |
-| `campaign success` | Mark content removed |
-| `monitor` | Scan search for indexed URLs |
-| `osint` | Document commenter handles |
-| `guide` | Print removal action guide |
 | `close` | Facebook closure checklist |
-| `doctor` | Validate config, deps, letters |
-| `daemon once` | Daily automation cycle |
-| `daemon once --dry-run` | Test automation without writes |
 | `all` | Evidence + campaign + osint + monitor |
 
-VPS deploy: **`deploy/README.md`** · **`deploy/VPS-GUIDE.md`** (cheap servers + free AI)
+---
+
+## Documentation
+
+| Guide | When to read |
+|-------|--------------|
+| [docs/QUICK-START.md](docs/QUICK-START.md) | Minimum steps to email Meta today |
+| [docs/COMPLETE-GUIDE.md](docs/COMPLETE-GUIDE.md) | Full walkthrough + FAQ |
+| [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) | **Windows test & deploy** (detailed) |
+| [docs/AUTO-EMAIL-SETUP.md](docs/AUTO-EMAIL-SETUP.md) | Free Gmail auto-send |
+| [deploy/VPS-GUIDE.md](deploy/VPS-GUIDE.md) | Cheap cloud server setup |
+
+PDFs in `docs/*.pdf` — rebuild with `./scripts/build-all-pdfs.sh`
 
 ---
 
-## 🔔 VPS automation (~£5/month)
+## Campaign tracks
+
+| Track | Rounds | Purpose |
+|-------|--------|---------|
+| **Meta** | 6 | GDPR → reminder → escalation → ICO |
+| **Google** | 3 | Defamation delisting drafts |
+| **ICO** | 1 | If Meta refuses after 30 days |
+
+---
+
+## Developer / full audit
 
 ```bash
-cd deploy && docker compose up -d --build
+./scripts/audit.sh      # tests + letters + doctor + PDFs
+python3 -m pytest tests/ -v
 ```
 
-| Automated daily | Manual (~2 min when Slack pings) |
-|-----------------|----------------------------------|
-| Name search | Google removal web forms |
-| Photo search (SerpAPI/TinEye) | — |
-| Slack alerts | — |
-| Next Meta letter / email | — |
-
 ---
 
-## 🧪 Test & verify
+## License
 
-```bash
-python3 -m pytest tests/ -v      # 20 automated tests
-python3 main.py doctor             # validate your setup
-python3 main.py --config config.example.yaml doctor
-./scripts/audit.sh                 # full repo audit
-python3 main.py daemon once --dry-run
-```
+**MIT License** — Copyright © 2026 **Thomas Gollogly**. See [LICENSE](LICENSE).
 
-Use `.env.example` for VPS secrets (`RECLAIMKIT_SMTP_PASSWORD`, etc.) instead of storing passwords in `config.yaml`.
+Not legal advice. Not affiliated with Meta, Google, or Removify.
 
----
-
-## 📄 License
-
-**MIT License** — Copyright © 2026 **Thomas Gollogly**. You made this; you own it.
-
-See **[LICENSE](LICENSE)** for full terms. Free to use, modify, and distribute with attribution.
-
-> ReclaimKit is independent — not affiliated with Meta, Google, Removify, or any reputation service. Templates are not legal advice.
-
----
-
-<p align="center">
-  <sub>Built in Northern Ireland · GDPR Article 17 · Defamation Act (NI) 2022</sub>
-</p>
+<p align="center"><sub>Built in Northern Ireland · GDPR Article 17 · Defamation Act (NI) 2022</sub></p>

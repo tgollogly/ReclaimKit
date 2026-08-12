@@ -24,6 +24,7 @@ fi
 build_one "$ROOT/docs/COMPLETE-GUIDE.md" "$ROOT/docs/COMPLETE-GUIDE.pdf" "ReclaimKit - Complete User Guide"
 build_one "$ROOT/docs/QUICK-START.md" "$ROOT/docs/QUICK-START.pdf" "ReclaimKit - Quick Start"
 build_one "$ROOT/docs/AUTO-EMAIL-SETUP.md" "$ROOT/docs/AUTO-EMAIL-SETUP.pdf" "ReclaimKit - Auto Email Setup"
+build_one "$ROOT/docs/WINDOWS-WSL-DOCKER.md" "$ROOT/docs/WINDOWS-WSL-DOCKER.pdf" "ReclaimKit - Windows WSL Docker"
 build_one "$ROOT/deploy/VPS-GUIDE.md" "$ROOT/docs/VPS-GUIDE.pdf" "ReclaimKit - VPS Guide"
 
 echo "All PDFs built in docs/"
