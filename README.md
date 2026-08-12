@@ -1,109 +1,49 @@
 # Stop Assholes — Online Harassment Response Toolkit (UK/NI)
 
-A command-line toolkit to help **Thomas Gollogly** (and others in similar situations) respond to harmful Facebook posts and Google search results under **Northern Ireland / UK law**.
+Removal-focused toolkit: **get the post taken down → delist from Google → close Facebook**. No police required.
 
 ## What this does
 
 | Command | Purpose |
 |---------|---------|
-| `python main.py init` | Create `config.yaml` and evidence folders |
-| `python main.py evidence` | Hash and package screenshots for solicitors/PSNI |
-| `python main.py letters` | Generate Meta GDPR + Google removal letter drafts |
-| `python main.py osint` | Document commenter handles and **legal** ID pathways |
-| `python main.py monitor` | Scan public search for indexed harmful URLs |
-| `python main.py guide` | Print NI legal action guide |
-| `python main.py all` | Run the full workflow |
-
-## What this cannot do
-
-**No software can automatically remove content from Facebook, Google, or "the whole internet."** Removal requires:
-
-1. Platform reports and formal legal requests (this tool generates those)
-2. Google delisting (hides from search — does not delete Facebook posts)
-3. PSNI investigation and/or NI High Court orders (for identifying anonymous posters)
-
-Attempting to "hack" or scrape Facebook violates law and platform terms.
+| `python3 main.py init` | Create `config.yaml` and evidence folders |
+| `python3 main.py letters` | Generate Meta GDPR + Google removal letter drafts |
+| `python3 main.py evidence` | Hash and package screenshots (for ICO/Meta if needed) |
+| `python3 main.py monitor` | Scan public search for indexed harmful URLs |
+| `python3 main.py guide` | Removal-only action guide |
+| `python3 main.py close` | Checklist to close Facebook after removal |
+| `python3 main.py all` | Run the full workflow |
 
 ## Quick start
 
 ```bash
 pip install -r requirements.txt
-python main.py init
-# Edit config.yaml — add your email, address, Facebook post URL
-# Copy your screenshots into evidence/screenshots/
-python main.py all
+python3 main.py init
+# Edit config.yaml — email, address, Facebook post URL
+# Copy screenshots into evidence/screenshots/
+python3 main.py all
+python3 main.py close   # read before deleting Facebook
 ```
 
-Review everything in the `output/` folder.
+## Your plan (no police)
 
-## Your case (pre-filled in config.example.yaml)
+1. **Submit Meta GDPR request today** — email `privacy@facebook.com` with generated letter
+2. **Escalate if ignored** — https://www.facebook.com/help/contact/571927962827151
+3. **Google delisting** — if anything shows in search (`python3 main.py monitor`)
+4. **Wait up to 1 month** for Meta's GDPR response
+5. **If Meta refuses** → ICO complaint (free, no police): https://ico.org.uk/make-a-complaint/
+6. **Confirm post is gone** → close Facebook (`python3 main.py close`)
 
-- **Group:** AreWeDatingTheSameGuy? Northern Ireland
-- **Post:** Anonymous, 5 June — "Any red flags Thomas gollogly" + your photo
-- **Comments:** False allegations (drugging, sexual misconduct) plus gossip
+**Important:** Deleting Facebook does **not** remove the group post. Submit the GDPR request **before** you close your account, and keep your screenshots locally.
 
-Documented commenter handles:
+## What this cannot do
 
-| Handle | Type | Identity via public OSINT? |
-|--------|------|---------------------------|
-| BrightPanda3834 | Auto-style pseudonym | No — needs Meta disclosure |
-| IntelligentJaguar6700 | Auto-style pseudonym | No |
-| EmpatheticPeapod4820 | Auto-style pseudonym | No |
-| Anonymous participant 617 | Facebook anonymous | No |
-| Keerzo Diesel | Possible real display name | Only via legal process |
-| Pieter James | Possible real display name | Only via legal process |
+No software can instantly wipe content from the internet. Meta has up to **1 month** to respond to GDPR requests. Google only hides URLs from search — it does not delete Facebook posts.
 
-## Priority actions (do these today)
+## If Meta refuses (still no police)
 
-### 1. Meta — UK GDPR Article 17
-
-Email **privacy@facebook.com** with the generated letter (`01_meta_gdpr_article17.txt`).
-
-Also submit via: Facebook → Settings → Privacy → Access and control your info.
-
-**Deadline for Meta to respond: 1 month.**
-
-### 2. Meta — Escalation
-
-If your in-app report was ignored: https://www.facebook.com/help/contact/571927962827151
-
-Use `02_meta_defamation_escalation.txt`.
-
-### 3. Google — Delisting
-
-- **Defamation:** https://support.google.com/legal/troubleshooter/1114905
-- **Personal info / image without consent:** https://support.google.com/websearch/contact/content_removal_form
-- **Monitor your name:** https://myactivity.google.com/results-about-you
-
-Run `python main.py monitor` to find URLs to include.
-
-### 4. PSNI (if content stays up)
-
-False criminal allegations may be reportable. Call **101** with your evidence pack.
-
-Ask about malicious communications and harassment under NI law.
-
-### 5. Solicitor (if Meta refuses after 30 days)
-
-NI defamation law differs from England & Wales. A solicitor can:
-
-- Send a Letter Before Action
-- Apply for a **Norwich Pharmacal order** forcing Meta to reveal anonymous poster identities
-- Pursue damages under the Defamation Act (Northern Ireland) 2022
-
-## Legal references
-
-- [Defamation Act (Northern Ireland) 2022](https://www.legislation.gov.uk/nia/2022/30/enacted)
-- [ICO — Right to erasure](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/)
-- [Ask the Police — false social media posts](https://www.askthe.police.uk/faq/?id=10c5af20-a1e8-ec11-bb3c-000d3a0afe35)
-- [Google defamation removal](https://support.google.com/legal-help-center/answer/16833565)
-
-## Support contacts
-
-- **Citizens Advice NI:** 0800 915 4605
-- **ICO:** 0303 123 1113 — https://ico.org.uk/make-a-complaint/
-- **PSNI non-emergency:** 101
+Use the **ICO** (Information Commissioner's Office) — 0303 123 1113 — with your evidence pack and proof you emailed Meta. That is the civil data-protection route, not a criminal one.
 
 ---
 
-*This toolkit provides information and document templates only. It is not legal advice.*
+*Information and templates only — not legal advice.*
