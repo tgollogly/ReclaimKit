@@ -22,7 +22,85 @@
 
 ---
 
-## How to test and deploy
+# ⭐ START HERE — Windows 11
+
+**If your prompt says `PS C:\Users\User>` you are in PowerShell.**  
+The commands `git clone`, `chmod`, and `sudo apt` **do not work there**. That is why you got errors.
+
+### One-time setup (do once)
+
+1. Install **Docker Desktop** → open it → wait until it says **Running**
+2. Install **WSL + Ubuntu** — PowerShell as Admin:
+   ```powershell
+   wsl --install -d Ubuntu
+   ```
+   Restart if asked.
+
+### Run setup — copy ONE of these into PowerShell
+
+**Option A — easiest** (downloads and runs the setup script):
+
+```powershell
+irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-windows.ps1 | iex
+```
+
+**Option B — one line** (no download):
+
+```powershell
+wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+```
+
+If `wsl -d Ubuntu` fails, replace it with just `wsl`:
+
+```powershell
+wsl bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+```
+
+**Wait until you see `SETUP COMPLETE`.** Do not type anything else while it runs.
+
+### After setup — configure and email Meta
+
+Open **Ubuntu** from the Start menu (prompt looks like `username@DESKTOP:~$`), then:
+
+```bash
+nano ~/stop-assholes/config.yaml          # your real email, address, phone
+cd ~/stop-assholes/deploy
+docker compose run --rm stop-assholes python3 main.py campaign init
+```
+
+Copy screenshots into `~/stop-assholes/evidence/screenshots/`.
+
+Email **privacy@facebook.com** using the letter in  
+`~/stop-assholes/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`
+
+Then record the send:
+
+```bash
+cd ~/stop-assholes/deploy
+docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1
+```
+
+**Detailed Windows guide:** [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) · [PDF](docs/WINDOWS-WSL-DOCKER.pdf)
+
+### Wrong terminal? Read this
+
+| Prompt | OK to run setup? |
+|--------|------------------|
+| `PS C:\Users\User>` | **No** — use the PowerShell one-liner above |
+| `username@DESKTOP:~$` | **Yes** — Ubuntu; use bash commands |
+| `DESKTOP:/mnt/host/c/...#` | **No** — wrong Linux; open **Ubuntu** app instead |
+
+**Do not** type `wsl` and then run `sudo apt` on the next `PS C:\` line — that is still PowerShell.
+
+Clean up a bad PowerShell clone:
+
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE\~\stop-assholes" -ErrorAction SilentlyContinue
+```
+
+---
+
+## How to test and deploy (all platforms)
 
 ReclaimKit has **four phases**. Do them in order:
 
@@ -46,17 +124,39 @@ ReclaimKit has **four phases**. Do them in order:
 | Linux or Mac | [Linux / Mac](#linux--mac) |
 | Cloud VPS (~£5/mo, PC can be off) | [VPS](#vps--cloud-server) |
 
-**Windows:** use **Ubuntu in WSL + Docker Desktop**, not PowerShell alone. PowerShell is only to install WSL (`wsl --install`) and start Docker Desktop.
+**Windows:** see **[START HERE — Windows 11](#-start-here--windows-11)** at the top of this page.
 
 ---
 
-## Windows 11 — WSL + Docker
+## Windows 11 — WSL + Docker (details)
+
+Everything you need is in **[START HERE](#-start-here--windows-11)** above. This section has extra detail.
+
+### PowerShell vs WSL
+
+ReclaimKit setup commands are **Linux commands**. They do **not** work in Windows PowerShell.
+
+| Your prompt looks like… | Where you are | Will setup work? |
+|-------------------------|---------------|------------------|
+| `PS C:\Users\User>` | **PowerShell** (Windows) | **No** |
+| `username@PC:~$` | **Ubuntu** (WSL/Linux) | **Yes** |
+| `DESKTOP-xxx:/mnt/host/c/...#` | Docker's WSL (wrong) | **No** — open Ubuntu app |
+
+**You are still in PowerShell if the line before your command starts with `PS C:\`.**
+
+Run setup using the **one-liner or `setup-windows.ps1`** in [START HERE](#-start-here--windows-11) — do not paste bash commands into PowerShell.
 
 ### Prerequisites (one time, on Windows)
 
-1. **WSL2** — PowerShell as Admin: `wsl --install` → restart  
+1. **WSL2 + Ubuntu** — PowerShell as Admin: `wsl --install -d Ubuntu` → restart  
 2. **Docker Desktop** — install, enable **WSL integration** for Ubuntu  
-3. Open **Ubuntu** from the Start menu (or type `wsl` in PowerShell)
+3. Docker Desktop must say **Running** before setup
+
+Check Ubuntu is installed:
+
+```powershell
+wsl -l -v
+```
 
 Full walkthrough: [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) · [PDF](docs/WINDOWS-WSL-DOCKER.pdf)
 
@@ -64,10 +164,13 @@ Full walkthrough: [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) · [P
 
 ### Phase 1 — Test (safe, no emails)
 
-Paste in the **Ubuntu/WSL** terminal:
+Use the **PowerShell one-liner** in [START HERE](#-start-here--windows-11).
+
+Or open **Ubuntu** from Start menu and paste:
 
 ```bash
 sudo apt update && sudo apt install -y git
+rm -rf ~/stop-assholes
 git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes
 cd ~/stop-assholes
 chmod +x scripts/wsl-setup-and-test.sh

@@ -2,7 +2,26 @@
 
 Run ReclaimKit in **WSL2** with **Docker Desktop** — daily automation, auto-save, optional auto-email.
 
-> Use **`python3`** in WSL (not Windows PowerShell `python`).
+> **Do not paste `git clone`, `chmod`, or `sudo apt` into PowerShell** — they only work in Ubuntu/Linux.
+
+---
+
+## Quick setup (PowerShell)
+
+1. Docker Desktop open and **Running**
+2. Paste **one** of these in PowerShell (`PS C:\...>`):
+
+```powershell
+irm https://raw.githubusercontent.com/tgollogly/ReclaimKit/main/scripts/setup-windows.ps1 | iex
+```
+
+Or:
+
+```powershell
+wsl -d Ubuntu bash -c "sudo apt update && sudo apt install -y git && rm -rf ~/stop-assholes && git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes && cd ~/stop-assholes && chmod +x scripts/wsl-setup-and-test.sh && ./scripts/wsl-setup-and-test.sh"
+```
+
+Pass = **`SETUP COMPLETE`**.
 
 ---
 
@@ -40,10 +59,15 @@ You should see a Linux prompt like `username@PC:~$`
 
 ## Part 2 — One script setup + test (WSL)
 
-Paste this **entire block** in the **Ubuntu/WSL** terminal (not PowerShell):
+**Your prompt must look like `username@PC:~$` — not `PS C:\Users\User>`.**
+
+**Easiest:** use the PowerShell one-liner in [Quick setup](#quick-setup-powershell) above.
+
+**Manual:** open **Ubuntu** from Start menu, then paste:
 
 ```bash
 sudo apt update && sudo apt install -y git
+rm -rf ~/stop-assholes
 git clone https://github.com/tgollogly/stop-assholes.git ~/stop-assholes
 cd ~/stop-assholes
 chmod +x scripts/wsl-setup-and-test.sh
