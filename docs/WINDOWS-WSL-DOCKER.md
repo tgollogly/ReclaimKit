@@ -96,6 +96,8 @@ Still in WSL:
 nano ~/stop-assholes/config.yaml
 ```
 
+**Save in nano:** `Ctrl+X` → `Y` → `Enter`
+
 Fill in:
 
 - Real **email**, **address**, **phone**

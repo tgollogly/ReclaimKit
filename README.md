@@ -138,6 +138,103 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\~\stop-assholes" -ErrorAction Sile
 
 ---
 
+### Complete walkthrough — every step (Windows)
+
+Follow this in order. **One-time** steps only need doing once.
+
+#### One-time: install Ubuntu + Docker
+
+1. **PowerShell as Admin:** `wsl --install -d Ubuntu` → restart PC  
+   - If it says *already exists*, Ubuntu is installed — skip this.
+2. Create Ubuntu user/password when prompted (e.g. `useradmin`).
+3. Install **Docker Desktop** → open it → wait until **Running**.
+4. Docker Desktop → **Settings → Resources → WSL Integration** → turn **ON** for **Ubuntu** → **Apply & Restart**.
+5. In PowerShell: `wsl --shutdown` → wait 10 seconds → reopen Ubuntu.
+
+#### One-time: GitHub access (private repo)
+
+6. Create a token: https://github.com/settings/tokens → **Generate new token (classic)** → tick **repo** → copy `ghp_...`  
+   - Or make repo public: https://github.com/tgollogly/ReclaimKit/settings → **Change visibility → Public**
+
+#### One-time: clone and run setup
+
+7. Open Ubuntu (`wsl -d Ubuntu` or Start menu → **Ubuntu**). Prompt must be `useradmin@DESKTOP:~$`.
+8. Run **one command at a time**:
+   ```bash
+   sudo apt update
+   sudo apt install -y git
+   rm -rf ~/stop-assholes
+   git clone https://github.com/tgollogly/ReclaimKit.git ~/stop-assholes
+   ```
+   - If asked: username `tgollogly`, password = **GitHub token** (not Windows password).
+9. Continue setup:
+   ```bash
+   cd ~/stop-assholes
+   chmod +x scripts/wsl-setup-and-test.sh
+   docker info          # must show Server Version — if not, fix WSL Integration (step 4)
+   ./scripts/wsl-setup-and-test.sh
+   ```
+   Pass = **`SETUP COMPLETE`**.
+
+#### Configure (edit once, saved forever)
+
+10. Edit config:
+    ```bash
+    nano ~/stop-assholes/config.yaml
+    ```
+    Change email, phone, address to your real details. Keep `post_origin: uncertain` if unsure who posted.
+
+    **Save in nano:** `Ctrl+X` → `Y` → `Enter`
+
+11. Regenerate letters and add screenshots:
+    ```bash
+    cd ~/stop-assholes/deploy
+    docker compose run --rm stop-assholes python3 main.py campaign init
+    ```
+    Copy PNG/JPG screenshots to `~/stop-assholes/evidence/screenshots/`  
+    (Windows path: `\\wsl$\Ubuntu\home\useradmin\stop-assholes\evidence\screenshots\`)
+
+#### Go live — email Meta
+
+12. Open letter: `~/stop-assholes/output/campaign-package-.../round-01-meta/meta_r1_gdpr_initial.txt`  
+    Email **privacy@facebook.com** with screenshots attached, then:
+    ```bash
+    cd ~/stop-assholes/deploy
+    docker compose run --rm stop-assholes python3 main.py campaign sent --track meta --round 1
+    ```
+
+---
+
+### After closing the terminal — does it autosave?
+
+**Yes. You do NOT rerun setup every time.**
+
+Docker saves everything to your Ubuntu home folder on disk. Closing the terminal does not delete anything.
+
+| Saved automatically | Location | Rerun setup? |
+|---------------------|----------|--------------|
+| Your config | `~/stop-assholes/config.yaml` | **No** |
+| Generated letters | `~/stop-assholes/output/` | **No** |
+| Campaign progress | `~/stop-assholes/output/campaign/state.json` | **No** |
+| Screenshots | `~/stop-assholes/evidence/screenshots/` | **No** |
+| Daily automation logs | `~/stop-assholes/output/cron.log` | **No** |
+| Docker container (daily cron) | Runs in background | Restarts with Docker Desktop |
+
+**After closing the terminal**, open Ubuntu again and run only:
+
+```bash
+wsl -d Ubuntu
+cd ~/stop-assholes/deploy
+docker compose ps                    # check container is Up
+docker compose run --rm stop-assholes python3 main.py campaign status
+```
+
+You only rerun `./scripts/wsl-setup-and-test.sh` if you delete the repo or move to a new PC.
+
+**Docker Desktop must be Running** for daily automation. Your files stay on disk even if Docker is closed — you just can't run docker commands until you start it again.
+
+---
+
 ## How to test and deploy (all platforms)
 
 ReclaimKit has **four phases**. Do them in order:
@@ -410,11 +507,15 @@ When Meta replies: run `campaign success`, `campaign refused`, or wait for 7-day
 
 | Problem | Fix |
 |---------|-----|
-| `python3: command not found` on Windows | Use **WSL/Ubuntu**, not PowerShell. In PowerShell use `python` (no `3`). |
-| `Docker daemon not running` | Start **Docker Desktop** on Windows; wait until it says Running. |
-| `doctor` warns about screenshots | Add PNG/JPG files to `evidence/screenshots/`, then re-run `campaign init`. |
-| Letters have placeholder text | Edit `config.yaml` with real details, then `campaign init` again. |
-| Container not running | `cd deploy && docker compose up -d` |
+| `Docker daemon not running` (but Docker Desktop open) | Docker Desktop → Settings → WSL Integration → enable **Ubuntu** → Apply & Restart → `wsl --shutdown` → reopen Ubuntu → `docker info` |
+| Closed terminal — lost everything? | **No** — config, letters, progress saved in `~/stop-assholes/`. Just reopen Ubuntu. |
+| How to save in nano | `Ctrl+X` → `Y` → `Enter` |
+| `git clone` asks for password | Use GitHub token as password (username `tgollogly`), or make repo public |
+| `&&` / `chmod` not found | You are in PowerShell — open Ubuntu (`wsl -d Ubuntu`) |
+| `python3: command not found` on Windows | Use **WSL/Ubuntu**, not PowerShell |
+| `doctor` warns about screenshots | Add PNG/JPG files to `evidence/screenshots/`, then re-run `campaign init` |
+| Letters have placeholder text | Edit `config.yaml` with real details, then `campaign init` again |
+| Container not running | `cd ~/stop-assholes/deploy && docker compose up -d` |
 | Want to re-test safely | `docker compose run --rm stop-assholes python3 main.py daemon once --dry-run` |
 | Full repo check | `./scripts/audit.sh` (20 tests + doctor + PDFs) |
 
