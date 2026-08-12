@@ -113,6 +113,29 @@ def subject_line(config: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def erasure_ground_citation(config: dict[str, Any], ground: str) -> str:
+    """Format erasure-law citation for letter grounds (consent vs unlawful)."""
+    article = jurisdiction_block(config)["erasure_article"]
+    if article.lower().startswith("article"):
+        sub = "(1)(c)" if ground == "consent" else "(1)(e)"
+        return f"{article}{sub}"
+    return article
+
+
+def _publication_grounds(
+    config: dict[str, Any],
+    *,
+    consent_text: str,
+    unlawful_text: str,
+) -> dict[str, str]:
+    consent_cite = erasure_ground_citation(config, "consent")
+    unlawful_cite = erasure_ground_citation(config, "unlawful")
+    return {
+        "consent_ground": f"(b) {consent_cite} — {consent_text}",
+        "unlawful_ground": f"(d) {unlawful_cite} — {unlawful_text}",
+    }
+
+
 def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
     """
     Wording for who posted — avoids false claims when origin is uncertain.
@@ -126,6 +149,17 @@ def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
     origin = (fb.get("post_origin") or "uncertain").strip().lower()
 
     if origin == "third_party":
+        grounds = _publication_grounds(
+            config,
+            consent_text=(
+                "Withdrawal of consent. I never consented to this processing "
+                "and withdraw any implied consent. No lawful basis for continued processing applies."
+            ),
+            unlawful_text=(
+                "Unlawful processing. Publication of my image without consent, "
+                "combined with false criminal and sexual allegations, is unlawful processing."
+            ),
+        )
         return {
             "intro": (
                 "My photograph and name appear in a Facebook group post I did not create. "
@@ -137,17 +171,21 @@ def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
                 "(c) All comments that identify, describe, or publish false statements about me;\n"
                 "(d) Metadata linking my identity to this content."
             ),
-            "consent_ground": (
-                "(b) Article 17(1)(c) — Withdrawal of consent. I never consented to this processing "
-                "and withdraw any implied consent. No lawful basis under Article 6(1) applies."
-            ),
-            "unlawful_ground": (
-                "(d) Article 17(1)(e) — Unlawful processing. Publication of my image without consent, "
-                "combined with false criminal and sexual allegations, is unlawful processing."
-            ),
+            **grounds,
         }
 
     if origin == "self":
+        grounds = _publication_grounds(
+            config,
+            consent_text=(
+                "Withdrawal of consent. I withdraw consent for continued "
+                "processing of my personal data at this URL and request immediate erasure."
+            ),
+            unlawful_text=(
+                "Unlawful processing. Continued hosting of false criminal "
+                "and sexual allegations alongside my image causes unlawful harm."
+            ),
+        )
         return {
             "intro": (
                 "My personal data appears in a Facebook group post. I request erasure of all "
@@ -161,17 +199,21 @@ def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
                 "(c) All third-party comments that identify, describe, or publish false statements about me;\n"
                 "(d) Metadata linking my identity to this content."
             ),
-            "consent_ground": (
-                "(b) Article 17(1)(c) — Withdrawal of consent. I withdraw consent for continued "
-                "processing of my personal data at this URL and request immediate erasure."
-            ),
-            "unlawful_ground": (
-                "(d) Article 17(1)(e) — Unlawful processing. Continued hosting of false criminal "
-                "and sexual allegations alongside my image causes unlawful harm."
-            ),
+            **grounds,
         }
 
     # uncertain — default; truthful when you do not know who posted
+    grounds = _publication_grounds(
+        config,
+        consent_text=(
+            "Withdrawal of consent. I do not consent to continued processing "
+            "of my personal data at this URL and withdraw any consent that may previously have applied."
+        ),
+        unlawful_text=(
+            "Unlawful processing. Hosting my image and name alongside false "
+            "criminal and sexual allegations causes unlawful processing and serious harm."
+        ),
+    )
     return {
         "intro": (
             "My photograph and full name appear in a Facebook group post at the URL below. "
@@ -186,14 +228,7 @@ def publication_context_block(config: dict[str, Any]) -> dict[str, str]:
             "(c) All comments that identify, describe, or publish false statements about me;\n"
             "(d) Metadata linking my identity to this content (including group indexing and copies)."
         ),
-        "consent_ground": (
-            "(b) Article 17(1)(c) — Withdrawal of consent. I do not consent to continued processing "
-            "of my personal data at this URL and withdraw any consent that may previously have applied."
-        ),
-        "unlawful_ground": (
-            "(d) Article 17(1)(e) — Unlawful processing. Hosting my image and name alongside false "
-            "criminal and sexual allegations causes unlawful processing and serious harm."
-        ),
+        **grounds,
     }
 
 
@@ -273,17 +308,23 @@ def meta_reports_block(config: dict[str, Any]) -> str:
         return "\n".join(lines)
 
     if fb.get("reported_to_meta"):
+        reports = fb.get("meta_reports")
+        report_date = "date not recorded"
+        if isinstance(reports, list) and reports and isinstance(reports[0], dict):
+            report_date = reports[0].get("date", report_date)
+        article = jurisdiction_block(config)["erasure_article"]
         return (
             "I reported this content through Meta's in-app reporting tools. Meta responded "
             "that the content \"does not go against Community Standards\" and declined removal "
-            "(support message, August 2026 — screenshot attached). That moderation outcome "
-            "does NOT satisfy applicable erasure rights and does NOT constitute a valid refusal under "
-            "statutory response requirements. I also reported the group where applicable; "
-            "group-level moderation is separate from my personal erasure rights."
+            f"(support message, {report_date} — screenshot attached). That moderation outcome "
+            f"does NOT satisfy applicable erasure rights under {article} and does NOT constitute "
+            "a valid refusal under statutory response requirements. I also reported the group "
+            "where applicable; group-level moderation is separate from my personal erasure rights."
         )
 
+    article = jurisdiction_block(config)["erasure_article"]
     return (
-        "I am submitting this Article 17 request without reliance on in-app reporting alone."
+        f"I am submitting this {article} request without reliance on in-app reporting alone."
     )
 
 

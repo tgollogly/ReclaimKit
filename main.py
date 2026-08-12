@@ -272,7 +272,7 @@ def main() -> int:
     p_sent = campaign_sub.add_parser("sent", help="Record that you sent a letter")
     p_sent.add_argument("--track", required=True, choices=["meta", "google", "regulator", "ico"])
     p_sent.add_argument("--round", type=int, required=True)
-    p_sent.add_argument("--reference", default="", help="ICO or Meta case reference")
+    p_sent.add_argument("--reference", default="", help="Regulator or Meta case reference")
 
     p_ref = campaign_sub.add_parser("refused", help="Record refusal and generate next round")
     p_ref.add_argument("--track", required=True, choices=["meta", "google", "regulator", "ico"])
