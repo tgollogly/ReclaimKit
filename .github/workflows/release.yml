@@ -61,7 +61,9 @@ jobs:
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
-            dist/*
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.zip
       - name: Extract CHANGELOG release notes
         id: notes
         shell: bash
@@ -83,8 +85,14 @@ jobs:
           } > release-notes-prefixed.md
           mv release-notes-prefixed.md release-notes.md
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048 # v2.2.0
-        with:
-          body_path: release-notes.md
-          files: dist/*
-          fail_on_unmatched_files: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release delete "${GITHUB_REF_NAME}" --yes --cleanup-tag=false
+          fi
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file release-notes.md \
+            dist/*.whl dist/*.tar.gz dist/*.zip dist/SHA256SUMS.txt
