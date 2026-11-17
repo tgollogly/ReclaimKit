@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="#verify-your-download"><img src="https://img.shields.io/badge/releases-signed%20%26%20verifiable-brightgreen?style=flat-square" alt="Signed releases" /></a>
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" />
   <img src="https://img.shields.io/badge/cost-%240%20software-success?style=flat-square" alt="Free software" />
   <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python 3.10+" />
