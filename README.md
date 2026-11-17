@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License" />
   <img src="https://img.shields.io/badge/cost-%240%20software-success?style=flat-square" alt="Free software" />
   <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python 3.10+" />
+  <img src="https://img.shields.io/badge/version-1.0.0-informational?style=flat-square" alt="Version 1.0.0" />
 </p>
 
 ---
@@ -165,6 +166,36 @@ Verify: `./scripts/check-autosave.sh`
 | [docs/WINDOWS-WSL-DOCKER.md](docs/WINDOWS-WSL-DOCKER.md) | Windows setup |
 | [docs/AUTO-EMAIL-SETUP.md](docs/AUTO-EMAIL-SETUP.md) | Optional SMTP |
 | [deploy/VPS-GUIDE.md](deploy/VPS-GUIDE.md) | Cloud server |
+
+---
+
+## Verify your download
+
+Official [GitHub Releases](https://github.com/tgollogly/ReclaimKit/releases) include a checksum manifest and build provenance attestations.
+
+### SHA256 checksum
+
+**Windows (PowerShell / cmd):**
+
+```text
+certutil -hashfile FILE SHA256
+```
+
+Compare the output with the matching line in `SHA256SUMS.txt` from the release.
+
+**macOS / Linux:**
+
+```bash
+shasum -a 256 -c SHA256SUMS.txt
+```
+
+### Build provenance
+
+With the [GitHub CLI](https://cli.github.com/) installed, verify each downloaded release file (wheel, sdist, zip):
+
+```bash
+gh attestation verify FILE --repo tgollogly/ReclaimKit
+```
 
 ---
 
